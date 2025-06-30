@@ -37,6 +37,9 @@ body {
     --map-link-bg: #007bff;
     --map-link-hover-bg: #0056b3;
     --direction-button-selected-text: white; /* Nouvelle variable pour le texte du bouton sélectionné */
+    --input-group-bg: rgba(34, 34, 34, 0.9); /* Fond pour les input-group */
+    --input-group-border: #880000; /* Bordure pour les input-group */
+    --input-group-shadow: rgba(255, 0, 0, 0.3); /* Ombre pour les input-group */
 }
 
 /* Application des variables de thème */
@@ -84,6 +87,9 @@ body.light-mode {
     --map-link-bg: #cc0000;
     --map-link-hover-bg: #ff0000;
     --direction-button-selected-text: white; /* Blanc pour le texte du bouton sélectionné */
+    --input-group-bg: rgba(240, 240, 240, 0.9); /* Fond clair pour les input-group */
+    --input-group-border: #0056b3; /* Bordure claire pour les input-group */
+    --input-group-shadow: rgba(0, 123, 255, 0.1); /* Ombre claire pour les input-group */
 }
 
 /* Conteneur principal de l'application */
@@ -111,6 +117,12 @@ h1 {
 
 .input-group {
     margin-bottom: 20px;
+    padding: 15px; /* Ajoute du rembourrage intérieur */
+    border-radius: 8px; /* Bords arrondis */
+    background-color: var(--input-group-bg); /* Utilise la nouvelle variable pour le fond */
+    border: 2px solid var(--input-group-border); /* Utilise la nouvelle variable pour la bordure */
+    box-shadow: 0 0 15px var(--input-group-shadow); /* Utilise la nouvelle variable pour l'ombre */
+    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease; /* Transition douce */
     text-align: left;
 }
 
@@ -288,4 +300,38 @@ button#searchButton:hover {
     border-bottom: 2px solid var(--results-h2-border);
     padding-bottom: 10px;
     margin-bottom: 15px;
-    transition: color 0.5s ease, border-color 0.5s
+    transition: color 0.5s ease, border-color 0.5s ease; /* Transition douce */
+}
+
+.result-item {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.result-item strong {
+    color: var(--results-strong-text);
+    transition: color 0.5s ease; /* Transition douce */
+}
+
+.map-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: var(--map-link-bg);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.map-link:hover {
+    background-color: var(--map-link-hover-bg);
+}
+
+/* Styles pour les messages d'erreur/information */
+p[style*="color: red;"],
+p[style*="color: orange;"] {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 15px;
+}
