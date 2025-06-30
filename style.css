@@ -1,0 +1,291 @@
+/* Styles généraux du corps de la page */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    position: relative;
+    transition: background-color 0.5s ease, color 0.5s ease; /* Transition douce pour le changement de thème */
+
+    /* Variables CSS par défaut (Mode Nuit) */
+    --body-bg: #1a1a1a;
+    --body-text: #f0f0f0;
+    --container-bg: rgba(26, 26, 26, 0.95);
+    --container-border: #cc0000;
+    --container-shadow: rgba(255, 0, 0, 0.6);
+    --h1-color: #ff3333;
+    --h1-shadow: rgba(0, 0, 0, 0.9);
+    --label-color: #f0f0f0;
+    --input-bg: #444;
+    --input-border: #666;
+    --input-text: #f0f0f0;
+    --input-placeholder: #ccc;
+    --button-bg: #cc0000;
+    --button-hover-bg: #ff0000;
+    --button-shadow: rgba(0, 0, 0, 0.5);
+    --results-bg: rgba(34, 34, 34, 0.95);
+    --results-border: #880000;
+    --results-shadow: rgba(255, 0, 0, 0.4);
+    --results-h2-color: #ff6666;
+    --results-h2-border: #550000;
+    --results-text: #e0e0e0;
+    --results-strong-text: #ff9999;
+    --map-link-bg: #007bff;
+    --map-link-hover-bg: #0056b3;
+    --direction-button-selected-text: white; /* Nouvelle variable pour le texte du bouton sélectionné */
+}
+
+/* Application des variables de thème */
+body {
+    background-color: var(--body-bg);
+    color: var(--body-text);
+}
+
+/* Calque sombre par-dessus le fond du body (optionnel si pas d'image de fond globale) */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75); /* Garder un calque sombre fixe */
+    z-index: -1;
+}
+
+/* Styles pour le mode Jour */
+body.light-mode {
+    --body-bg: #f0f0f0;
+    --body-text: #333;
+    --container-bg: rgba(255, 255, 255, 0.95);
+    --container-border: #007bff;
+    --container-shadow: rgba(0, 123, 255, 0.3);
+    --h1-color: #0056b3;
+    --h1-shadow: rgba(0, 0, 0, 0.2);
+    --label-color: #333;
+    --input-bg: #eee;
+    --input-border: #ccc;
+    --input-text: #333;
+    --input-placeholder: #888;
+    --button-bg: #007bff;
+    --button-hover-bg: #0056b3;
+    --button-shadow: rgba(0, 0, 0, 0.2);
+    --results-bg: rgba(240, 240, 240, 0.95);
+    --results-border: #0056b3;
+    --results-shadow: rgba(0, 123, 255, 0.2);
+    --results-h2-color: #007bff;
+    --results-h2-border: #0056b3;
+    --results-text: #444;
+    --results-strong-text: #000;
+    --map-link-bg: #cc0000;
+    --map-link-hover-bg: #ff0000;
+    --direction-button-selected-text: white; /* Blanc pour le texte du bouton sélectionné */
+}
+
+/* Conteneur principal de l'application */
+.container {
+    background-color: var(--container-bg);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 25px var(--container-shadow);
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+    margin-top: 50px;
+    border: 3px solid var(--container-border);
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease; /* Transition douce */
+}
+
+h1 {
+    color: var(--h1-color);
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 5px var(--h1-shadow);
+    transition: color 0.5s ease, text-shadow 0.5s ease; /* Transition douce */
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--label-color);
+    transition: color 0.5s ease; /* Transition douce */
+}
+
+input[type="number"] {
+    width: 200px; /* Largeur réduite pour le PK */
+    margin: 0 auto; /* Centrer le champ de saisie */
+    display: block; /* Nécessaire pour margin: auto */
+    padding: 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease; /* Transition douce */
+}
+
+input[type="number"]::placeholder {
+    color: var(--input-placeholder);
+    transition: color 0.5s ease; /* Transition douce */
+}
+
+/* Styles pour le sélecteur de thème Jour/Nuit */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #cc0000;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #cc0000;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.theme-switch-wrapper em {
+    font-size: 1em;
+    color: var(--label-color); /* Utilise la couleur du label pour le texte du thème */
+    transition: color 0.5s ease; /* Transition douce */
+}
+
+/* Styles pour les boutons de direction */
+.direction-buttons {
+    display: flex;
+    justify-content: center; /* Centrer les boutons */
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.direction-button {
+    flex: 1;
+    padding: 12px 15px;
+    border: 2px solid var(--container-border); /* Bordure du même rouge/bleu que le conteneur */
+    border-radius: 8px; /* Bords légèrement plus arrondis */
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    max-width: 200px; /* Limiter la largeur des boutons */
+}
+
+.direction-button:hover {
+    background-color: var(--button-hover-bg);
+    color: white; /* Texte blanc au survol */
+    border-color: var(--button-hover-bg);
+}
+
+.direction-button.selected {
+    background-color: var(--button-bg); /* Couleur du bouton sélectionné */
+    color: var(--direction-button-selected-text); /* Texte blanc ou noir selon le thème */
+    border-color: var(--button-bg);
+    box-shadow: 0 0 12px var(--button-shadow); /* Ombre plus prononcée pour le bouton sélectionné */
+}
+
+button#searchButton { /* Sélecteur plus spécifique pour le bouton de recherche principal */
+    background-color: var(--button-bg);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 10px var(--button-shadow);
+    margin-top: 20px; /* Ajoute un peu d'espace au-dessus du bouton */
+}
+
+button#searchButton:hover {
+    background-color: var(--button-hover-bg);
+    transform: translateY(-3px);
+}
+
+/* Section des résultats */
+#results {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: var(--results-bg);
+    border-radius: 8px;
+    border: 2px solid var(--results-border);
+    text-align: left;
+    color: var(--results-text);
+    box-shadow: 0 0 20px var(--results-shadow);
+    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease; /* Transition douce */
+}
+
+#results h2 {
+    color: var(--results-h2-color);
+    margin-top: 0;
+    border-bottom: 2px solid var(--results-h2-border);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    transition: color 0.5s ease, border-color 0.5s

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recherche Portes Autoroute</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Recherche Portes Autoroute</h1>
+
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox" />
+                <div class="slider round"></div>
+            </label>
+            <em>Mode Nuit</em>
+        </div>
+        
+        <div class="input-group">
+            <label for="pkInput">PK Autoroute (ex: 82.20):</label>
+            <input type="number" id="pkInput" step="0.01" placeholder="Entrez le PK">
+        </div>
+
+        <div class="input-group">
+            <label>Sens de circulation:</label>
+            <div class="direction-buttons">
+                <button type="button" class="direction-button" data-direction="Paris→Boulogne">Paris → Boulogne</button>
+                <button type="button" class="direction-button" data-direction="Boulogne - Paris">Boulogne → Paris</button>
+            </div>
+        </div>
+
+        <button id="searchButton">Rechercher la Porte</button>
+
+        <div id="results">
+            <h2>Résultats de la recherche</h2>
+            <p id="resultMessage">Entrez un PK et un sens pour commencer la recherche.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
