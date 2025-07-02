@@ -1,203 +1,181 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Sélection des éléments HTML
+    const themeToggle = document.getElementById('checkbox');
+    const autorouteButtonsContainer = document.getElementById('autorouteButtons'); // Changement ici
     const pkInput = document.getElementById('pkInput');
-    const directionButtons = document.querySelectorAll('.direction-button'); // Maintenant des boutons
-    let selectedDirection = directionButtons[0].dataset.direction; // Initialise avec le premier sens par défaut
+    const directionButtonsContainer = document.getElementById('directionButtons');
     const searchButton = document.getElementById('searchButton');
     const resultsDiv = document.getElementById('results');
-    const resultMessage = document.getElementById('resultMessage');
 
-    let portesData = []; // Pour stocker les données des portes
+    let portesData = [];
+    let selectedAutoroute = ''; // Nouvelle variable pour stocker l'autoroute sélectionnée
+    let selectedDirection = ''; // Variable pour stocker le sens sélectionné
 
-    // Fonction pour afficher des messages
-    function displayMessage(message, type = "info") {
-        resultMessage.textContent = message;
-        // Les couleurs sont maintenant gérées par CSS variables et classes de thème pour une meilleure cohérence
-        // Cependant, pour les messages d'erreur/orange spécifiques, on peut encore les forcer si besoin
-        if (type === "error") {
-            resultMessage.style.color = "red";
-        } else if (type === "orange") {
-            resultMessage.style.color = "orange";
-        } else {
-            // Remet la couleur par défaut définie par le thème via CSS
-            resultMessage.style.color = ''; // Vide le style inline pour que le CSS prenne le relais
-        }
-        resultsDiv.style.display = "block"; // S'assurer que la section des résultats est visible
+    // --- Gestion du thème Jour/Nuit ---
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+        document.body.classList.add(currentTheme);
+        themeToggle.checked = (currentTheme === 'light-mode');
+    } else {
+        document.body.classList.add('dark-mode');
+        themeToggle.checked = false;
     }
 
-    // Chargement des données JSON des portes
-    fetch('portes_autoroute.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP ! statut : ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            portesData = data;
-            displayMessage("Données des portes chargées. Entrez un PK et un sens pour rechercher.");
-        })
-        .catch(error => {
-            console.error("Erreur lors du chargement des données des portes:", error);
-            displayMessage("Erreur lors du chargement des données des portes: " + error.message, "error");
-        });
+    themeToggle.addEventListener('change', () => {
+        if (themeToggle.checked) {
+            document.body.classList.remove('dark-mode');
+            document.body.classList.add('light-mode');
+            localStorage.setItem('theme', 'light-mode');
+        } else {
+            document.body.classList.remove('light-mode');
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark-mode');
+        }
+    });
 
-    // Logique de recherche de la porte
-    function searchPorte() {
-        const pkValue = pkInput.value.trim();
+    // --- Chargement des données des portes ---
+    async function loadPortesData() {
+        try {
+            const response = await fetch('portes_autoroute.json');
+            portesData = await response.json();
+            console.log('Données chargées :', portesData);
+            populateAutorouteButtons(); // Remplir les boutons d'autoroutes
+        } catch (error) {
+            console.error('Erreur lors du chargement des données des portes :', error);
+            resultsDiv.innerHTML = '<h2>Erreur</h2><p style="color: red;">Impossible de charger les données des portes. Veuillez réessayer plus tard.</p>';
+        }
+    }
 
-        if (!pkValue) {
-            displayMessage("Veuillez entrer un PK autoroute.", "orange");
+    // --- Fonction pour remplir les boutons d'autoroutes ---
+    function populateAutorouteButtons() {
+        const uniqueAutoroutes = [...new Set(portesData.map(porte => porte.Autoroute))].sort();
+        autorouteButtonsContainer.innerHTML = ''; // Nettoyer les anciens boutons
+
+        if (uniqueAutoroutes.length === 0) {
+            autorouteButtonsContainer.innerHTML = '<p>Aucune autoroute disponible.</p>';
             return;
         }
 
-        const targetPk = parseFloat(pkValue.replace(',', '.')); // Convertir PK en nombre, gérer la virgule
+        uniqueAutoroutes.forEach(autoroute => {
+            const button = document.createElement('button');
+            button.className = 'autoroute-button';
+            button.textContent = autoroute;
+            button.setAttribute('data-autoroute', autoroute);
+            button.addEventListener('click', () => {
+                // Supprimer la classe 'selected' de tous les boutons d'autoroute
+                document.querySelectorAll('.autoroute-button').forEach(btn => btn.classList.remove('selected'));
+                // Ajouter la classe 'selected' au bouton cliqué
+                button.classList.add('selected');
+                selectedAutoroute = autoroute; // Mettre à jour l'autoroute sélectionnée
+                updateDirectionButtons(); // Mettre à jour les boutons de direction
+            });
+            autorouteButtonsContainer.appendChild(button);
+        });
+
+        resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Sélectionnez une autoroute et entrez un PK pour trouver une porte.</p>';
+        // Initialiser les boutons de direction au cas où
+        updateDirectionButtons();
+    }
+
+    // --- Fonction pour mettre à jour les boutons de direction en fonction de l'autoroute sélectionnée ---
+    function updateDirectionButtons() {
+        directionButtonsContainer.innerHTML = ''; // Nettoyer les anciens boutons
+        selectedDirection = ''; // Réinitialiser le sens sélectionné
+
+        if (!selectedAutoroute) { // Utilise la nouvelle variable selectedAutoroute
+            directionButtonsContainer.innerHTML = '<p>Veuillez sélectionner une autoroute d\'abord.</p>';
+            return;
+        }
+
+        const portesForSelectedAutoroute = portesData.filter(porte => porte.Autoroute === selectedAutoroute);
+        const uniqueSens = [...new Set(portesForSelectedAutoroute.map(porte => porte.Sens))].sort();
+
+        if (uniqueSens.length === 0) {
+            directionButtonsContainer.innerHTML = '<p>Aucun sens disponible pour cette autoroute.</p>';
+            return;
+        }
+
+        uniqueSens.forEach(sens => {
+            const button = document.createElement('button');
+            button.className = 'direction-button';
+            button.textContent = sens;
+            button.setAttribute('data-direction', sens);
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.direction-button').forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+                selectedDirection = sens;
+            });
+            directionButtonsContainer.appendChild(button);
+        });
+
+        resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>';
+    }
+
+    // --- Fonction de recherche de la porte la plus proche ---
+    searchButton.addEventListener('click', () => {
+        const targetPk = parseFloat(pkInput.value.replace(',', '.')); // IMPORTANT: Convertit la virgule en point
+
+        resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2>'; // Nettoyer les anciens résultats
 
         if (isNaN(targetPk)) {
-            displayMessage("Veuillez entrer un PK valide (un nombre).", "error");
+            resultsDiv.innerHTML += '<p style="color: red;">Veuillez entrer un PK valide (un nombre).</p>';
+            return;
+        }
+
+        if (!selectedAutoroute) { // Utilise la nouvelle variable selectedAutoroute
+            resultsDiv.innerHTML += '<p style="color: red;">Veuillez sélectionner une autoroute.</p>';
             return;
         }
 
         if (!selectedDirection) {
-            displayMessage("Veuillez sélectionner un sens de circulation.", "orange");
+            resultsDiv.innerHTML += '<p style="color: red;">Veuillez sélectionner un sens de circulation.</p>';
             return;
         }
 
-        const filteredPortes = portesData.filter(porte => porte.Sens === selectedDirection);
+        const filteredPortes = portesData.filter(porte =>
+            porte.Autoroute === selectedAutoroute &&
+            porte.Sens === selectedDirection
+        );
 
         if (filteredPortes.length === 0) {
-            displayMessage(`Aucune porte trouvée pour le sens "${selectedDirection}".`, "orange");
+            resultsDiv.innerHTML += '<p style="color: orange;">Aucune porte trouvée pour l\'autoroute et le sens sélectionnés.</p>';
             return;
         }
 
-        let bestPorte = null;
-        let minDiff = Infinity; // Différence minimale avec le PK cible
+        let closestPorte = null;
+        let minDifference = Infinity;
 
-        const isPkIncreasing = selectedDirection.includes("Paris→Boulogne");
-        const isPkDecreasing = selectedDirection.includes("Boulogne - Paris");
+        filteredPortes.forEach(porte => {
+            const portePk = parseFloat(porte.PK.replace(',', '.'));
+            const difference = Math.abs(targetPk - portePk);
 
-        let foundInDirection = false;
-
-        for (const porte of filteredPortes) {
-            const portePk = parseFloat(String(porte.PK).replace(',', '.'));
-            let diff = Infinity;
-
-            if (isPkIncreasing && portePk >= targetPk) {
-                diff = portePk - targetPk;
-            } else if (isPkDecreasing && portePk <= targetPk) {
-                diff = targetPk - portePk;
+            if (difference < minDifference) {
+                minDifference = difference;
+                closestPorte = porte;
             }
-
-            if (diff < minDiff) {
-                minDiff = diff;
-                bestPorte = porte;
-                foundInDirection = true;
-            }
-        }
-
-        if (!foundInDirection && filteredPortes.length > 0) {
-            minDiff = Infinity;
-            bestPorte = filteredPortes.reduce((prev, curr) => {
-                const prevPk = parseFloat(String(prev.PK).replace(',', '.'));
-                const currPk = parseFloat(String(curr.PK).replace(',', '.'));
-                return (Math.abs(currPk - targetPk) < Math.abs(prevPk - targetPk) ? curr : prev);
-            });
-            displayMessage("Aucune porte trouvée en amont dans ce sens. Affichage de la porte la plus proche :", "orange");
-        }
-
-        if (bestPorte) {
-            let detailsHtml = `
-                <h2>Détails de la porte la plus proche</h2>
-                <div class="result-item"><strong>PK:</strong> ${bestPorte.PK}</div>
-                <div class="result-item"><strong>Nom:</strong> ${bestPorte.Nom || 'Non spécifié'}</div>
-                <div class="result-item"><strong>Autoroute:</strong> ${bestPorte.Autoroute || 'Non spécifiée'}</div>
-                <div class="result-item"><strong>Sens:</strong> ${bestPorte.Sens || 'Non spécifié'}</div>
-                <div class="result-item"><strong>Type d'accès:</strong> ${bestPorte['Type d\'accès'] || 'Non spécifié'}</div>
-                <div class="result-item"><strong>Route d'accès:</strong> ${bestPorte['Route d\'accès'] || 'Non spécifiée'}</div>
-            `;
-
-            if (bestPorte.Latitude && bestPorte.Longitude) {
-                // Utilisation de la syntaxe correcte pour Google Maps
-                const mapLink = `https://www.google.com/maps/search/?api=1&query=${bestPorte.Latitude},${bestPorte.Longitude}`;
-                detailsHtml += `<a href="${mapLink}" target="_blank" class="map-link">Voir sur Google Maps</a>`;
-            } else {
-                detailsHtml += `<p style="color: orange; font-size: 0.9em;">Coordonnées GPS non disponibles pour cette porte.</p>`;
-            }
-
-            resultsDiv.innerHTML = detailsHtml;
-            resultsDiv.style.display = "block";
-        } else {
-            displayMessage("Aucune porte trouvée correspondant à vos critères.", "orange");
-        }
-    }
-
-    // Écouteur d'événement pour le bouton de recherche
-    searchButton.addEventListener('click', searchPorte);
-
-    // Écouteur d'événement pour la touche 'Entrée' dans le champ PK
-    pkInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            searchPorte();
-        }
-    });
-
-    // Logique pour les boutons de direction
-    directionButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Supprime la classe 'selected' de tous les boutons
-            directionButtons.forEach(btn => btn.classList.remove('selected'));
-
-            // Ajoute la classe 'selected' au bouton cliqué
-            button.classList.add('selected');
-
-            // Met à jour la variable globale selectedDirection
-            selectedDirection = button.dataset.direction;
         });
-    });
 
-    // Appliquer la sélection initiale au premier bouton au chargement
-    if (directionButtons.length > 0) {
-        directionButtons[0].classList.add('selected');
-    }
+        if (closestPorte) {
+            const latitude = parseFloat(closestPorte.Latitude.trim());
+            const longitude = parseFloat(closestPorte['Longitude '].trim()); // Prend en compte l'espace dans la clé
 
-    // =========================================================
-    // LOGIQUE DU SÉLECTEUR DE THÈME JOUR/NUIT
-    // =========================================================
+            const mapLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
 
-    const themeToggle = document.getElementById('checkbox');
-    const themeText = document.querySelector('.theme-switch-wrapper em');
-
-    // Fonction pour appliquer le thème
-    function applyTheme(isLightMode) {
-        if (isLightMode) {
-            document.body.classList.add('light-mode');
-            themeText.textContent = 'Mode Jour';
+            resultsDiv.innerHTML += `
+                <div class="result-item">
+                    <p><strong>Autoroute :</strong> ${closestPorte.Autoroute}</p>
+                    <p><strong>Sens :</strong> ${closestPorte.Sens}</p>
+                    <p><strong>PK le plus proche :</strong> ${closestPorte.PK}</p>
+                    <p><strong>Type d'accès :</strong> ${closestPorte['Type d\'accès'] || 'Non spécifié'}</p>
+                    <p><strong>Commentaires :</strong> ${closestPorte['Commentaires'] || 'Aucun'}</p>
+                    <p><strong>Route d'accès :</strong> ${closestPorte['Route d\'accès'] || 'Non spécifié'}</p>
+                    ${closestPorte.Photo && closestPorte.Photo !== 'à définir' ? `<p><a href="${closestPorte.Photo}" target="_blank">Voir la photo</a></p>` : ''}
+                    <a href="${mapLink}" target="_blank" class="map-link">Voir sur Google Maps</a>
+                </div>
+            `;
         } else {
-            document.body.classList.remove('light-mode');
-            themeText.textContent = 'Mode Nuit';
-        }
-        // Gérer la couleur du texte du switch basé sur le thème
-        // Ceci est géré par les variables CSS, donc pas besoin de le forcer ici
-    }
-
-    // Vérifier la préférence de l'utilisateur au chargement de la page
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
-        themeToggle.checked = true;
-        applyTheme(true);
-    } else {
-        themeToggle.checked = false;
-        applyTheme(false);
-    }
-
-    // Écouter les changements sur l'interrupteur
-    themeToggle.addEventListener('change', () => {
-        if (themeToggle.checked) {
-            applyTheme(true);
-            localStorage.setItem('theme', 'light');
-        } else {
-            applyTheme(false);
-            localStorage.setItem('theme', 'dark');
+            resultsDiv.innerHTML += '<p style="color: orange;">Aucune porte trouvée correspondant à vos critères.</p>';
         }
     });
+
+    loadPortesData();
 });

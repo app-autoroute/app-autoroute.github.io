@@ -36,10 +36,11 @@ body {
     --results-strong-text: #ff9999;
     --map-link-bg: #007bff;
     --map-link-hover-bg: #0056b3;
-    --direction-button-selected-text: white; /* Nouvelle variable pour le texte du bouton sélectionné */
+    --button-selected-text: white; /* Variable pour le texte des boutons sélectionné (autoroute et sens) */
     --input-group-bg: rgba(34, 34, 34, 0.9); /* Fond pour les input-group */
     --input-group-border: #880000; /* Bordure pour les input-group */
     --input-group-shadow: rgba(255, 0, 0, 0.3); /* Ombre pour les input-group */
+    --select-arrow-color: #f0f0f0; /* Couleur de la flèche du select */
 }
 
 /* Application des variables de thème */
@@ -86,10 +87,11 @@ body.light-mode {
     --results-strong-text: #000;
     --map-link-bg: #cc0000;
     --map-link-hover-bg: #ff0000;
-    --direction-button-selected-text: white; /* Blanc pour le texte du bouton sélectionné */
+    --button-selected-text: white; /* Blanc pour le texte du bouton sélectionné */
     --input-group-bg: rgba(240, 240, 240, 0.9); /* Fond clair pour les input-group */
     --input-group-border: #0056b3; /* Bordure claire pour les input-group */
     --input-group-shadow: rgba(0, 123, 255, 0.1); /* Ombre claire pour les input-group */
+    --select-arrow-color: #333; /* Couleur de la flèche du select */
 }
 
 /* Conteneur principal de l'application */
@@ -132,10 +134,12 @@ label {
     font-weight: bold;
     color: var(--label-color);
     transition: color 0.5s ease; /* Transition douce */
+    white-space: nowrap; /* Empêche le texte du label de passer à la ligne */
 }
 
-input[type="number"] {
-    width: 200px; /* Largeur réduite pour le PK */
+input[type="number"] { /* Styles spécifiques à l'input number */
+    width: 100%; /* Prend toute la largeur disponible dans son parent */
+    max-width: 250px; /* Mais ne dépasse pas 250px de large */
     margin: 0 auto; /* Centrer le champ de saisie */
     display: block; /* Nécessaire pour margin: auto */
     padding: 12px;
@@ -146,6 +150,62 @@ input[type="number"] {
     font-size: 16px;
     box-sizing: border-box;
     transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease; /* Transition douce */
+    appearance: none; /* Supprime le style par default du navigateur pour les inputs number */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Spécifique pour les inputs type="number" pour enlever les flèches d'incrémentation */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+
+/* Styles pour les conteneurs de boutons (Autoroute et Sens) */
+.autoroute-buttons,
+.direction-buttons {
+    display: flex;
+    flex-wrap: wrap; /* Permet aux boutons de passer à la ligne si l'écran est petit */
+    justify-content: center; /* Centrer les boutons */
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Styles pour les boutons d'Autoroute et de Sens */
+.autoroute-button,
+.direction-button {
+    padding: 12px 15px;
+    border: 2px solid var(--container-border); /* Bordure du même rouge/bleu que le conteneur */
+    border-radius: 8px; /* Bords légèrement plus arrondis */
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    max-width: 200px; /* Limiter la largeur des boutons */
+    flex-grow: 1; /* Permet aux boutons de s'étirer si l'espace le permet */
+    text-align: center;
+}
+
+.autoroute-button:hover,
+.direction-button:hover {
+    background-color: var(--button-hover-bg);
+    color: white; /* Texte blanc au survol */
+    border-color: var(--button-hover-bg);
+}
+
+.autoroute-button.selected,
+.direction-button.selected {
+    background-color: var(--button-bg); /* Couleur du bouton sélectionné */
+    color: var(--button-selected-text); /* Texte blanc ou noir selon le thème */
+    border-color: var(--button-bg);
+    box-shadow: 0 0 12px var(--button-shadow); /* Ombre plus prononcée pour le bouton sélectionné */
 }
 
 input[type="number"]::placeholder {
@@ -227,41 +287,6 @@ input:checked + .slider:before {
     transition: color 0.5s ease; /* Transition douce */
 }
 
-/* Styles pour les boutons de direction */
-.direction-buttons {
-    display: flex;
-    justify-content: center; /* Centrer les boutons */
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.direction-button {
-    flex: 1;
-    padding: 12px 15px;
-    border: 2px solid var(--container-border); /* Bordure du même rouge/bleu que le conteneur */
-    border-radius: 8px; /* Bords légèrement plus arrondis */
-    background-color: var(--input-bg);
-    color: var(--input-text);
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    max-width: 200px; /* Limiter la largeur des boutons */
-}
-
-.direction-button:hover {
-    background-color: var(--button-hover-bg);
-    color: white; /* Texte blanc au survol */
-    border-color: var(--button-hover-bg);
-}
-
-.direction-button.selected {
-    background-color: var(--button-bg); /* Couleur du bouton sélectionné */
-    color: var(--direction-button-selected-text); /* Texte blanc ou noir selon le thème */
-    border-color: var(--button-bg);
-    box-shadow: 0 0 12px var(--button-shadow); /* Ombre plus prononcée pour le bouton sélectionné */
-}
-
 button#searchButton { /* Sélecteur plus spécifique pour le bouton de recherche principal */
     background-color: var(--button-bg);
     color: white;
@@ -292,46 +317,3 @@ button#searchButton:hover {
     color: var(--results-text);
     box-shadow: 0 0 20px var(--results-shadow);
     transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease; /* Transition douce */
-}
-
-#results h2 {
-    color: var(--results-h2-color);
-    margin-top: 0;
-    border-bottom: 2px solid var(--results-h2-border);
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-    transition: color 0.5s ease, border-color 0.5s ease; /* Transition douce */
-}
-
-.result-item {
-    margin-bottom: 10px;
-    line-height: 1.5;
-}
-
-.result-item strong {
-    color: var(--results-strong-text);
-    transition: color 0.5s ease; /* Transition douce */
-}
-
-.map-link {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 15px;
-    background-color: var(--map-link-bg);
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.map-link:hover {
-    background-color: var(--map-link-hover-bg);
-}
-
-/* Styles pour les messages d'erreur/information */
-p[style*="color: red;"],
-p[style*="color: orange;"] {
-    font-weight: bold;
-    text-align: center;
-    margin-top: 15px;
-}
