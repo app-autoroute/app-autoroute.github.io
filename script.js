@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('portes_autoroute.json');
             portesData = await response.json();
-            // Assurez-vous que les PK sont bien des nombres pour le tri
             portesData.forEach(porte => {
                 porte.PK_Num = parseFloat(porte.PK.replace(',', '.'));
             });
@@ -97,8 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const portesForSelectedAutoroute = portesData.filter(porte => porte.Autoroute === selectedAutoroute);
-        // Utiliser Set pour obtenir des sens uniques tout en conservant l'ordre original des PK si possible
-        // Ou trier alphabétiquement pour une cohérence visuelle
         const uniqueSens = [...new Set(portesForSelectedAutoroute.map(porte => porte.Sens))].sort();
 
 
@@ -176,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Écouteur d'événement pour le bouton Réinitialiser ---
     resetButton.addEventListener('click', resetForm);
 
-    // --- Fonction de recherche de la porte la plus proche (LOGIQUE MODIFIÉE) ---
+    // --- Fonction de recherche de la porte la plus proche (LOGIQUE CORRIGÉE ET AJOUT REPLI) ---
     searchButton.addEventListener('click', () => {
         const targetPk = parseFloat(pkInput.value.replace(',', '.'));
 
@@ -213,11 +210,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let closestPorte = null;
-        let minDistanceToTravel = Infinity; // Nous cherchons la plus petite distance POSITIVE à parcourir
+        let idealPorte = null;
+        let fallbackPorte = null; // Nouvelle variable pour la porte de repli
 
-        // Trouver la "ProgressionPK" pour le sens et l'autoroute choisis
-        // On prend la première porte trouvée qui correspond aux critères de filtre pour récupérer cette info
         const progressionPK = filteredPortes[0] ? filteredPortes[0].ProgressionPK : null;
 
         if (!progressionPK) {
@@ -225,63 +220,98 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- NOUVELLE LOGIQUE DE RECHERCHE ---
+        // --- DÉTERMINATION DES PORTES IDÉALE ET DE REPLI ---
         if (progressionPK === "Ascendant") {
-            // Pour un sens Ascendant, on cherche le premier PK >= PK_saisi
-            const relevantPortes = filteredPortes.filter(porte => porte.PK_Num >= targetPk);
+            // Trier toutes les portes filtrées par PK ascendant
+            filteredPortes.sort((a, b) => a.PK_Num - b.PK_Num);
 
-            if (relevantPortes.length > 0) {
-                // Trier les portes pertinentes par PK ascendant pour trouver la plus proche après le PK actuel
-                relevantPortes.sort((a, b) => a.PK_Num - b.PK_Num);
-                closestPorte = relevantPortes[0]; // La première après ou au PK
+            // Trouver les portes accessibles (PK_Num <= targetPk)
+            const accessiblePortes = filteredPortes.filter(porte => porte.PK_Num <= targetPk);
+
+            if (accessiblePortes.length > 0) {
+                // La porte idéale est la dernière accessible (PK le plus élevé <= targetPk)
+                idealPorte = accessiblePortes[accessiblePortes.length - 1];
+                
+                // La porte de repli est l'avant-dernière accessible, si elle existe
+                if (accessiblePortes.length >= 2) {
+                    fallbackPorte = accessiblePortes[accessiblePortes.length - 2];
+                }
             } else {
-                // Si aucune porte n'est trouvée après le PK (on a dépassé toutes les portes)
-                // On peut décider de montrer la dernière porte de la liste (la plus haute)
-                // Ou afficher un message spécifique. Ici, on prend la dernière du sens filtré.
-                filteredPortes.sort((a, b) => b.PK_Num - a.PK_Num); // Trier par PK descendant pour trouver la dernière
-                closestPorte = filteredPortes[0];
-                resultsDiv.innerHTML += '<p style="color: orange;">Vous avez dépassé toutes les portes dans ce sens. Affichage de la dernière porte disponible.</p>';
+                // Si aucune porte n'est accessible (toutes sont après le PK cible)
+                // L'idéal est la première porte du segment (celle avec le plus petit PK)
+                idealPorte = filteredPortes[0];
+                resultsDiv.innerHTML += '<p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>';
             }
 
         } else if (progressionPK === "Descendant") {
-            // Pour un sens Descendant, on cherche le premier PK <= PK_saisi
-            const relevantPortes = filteredPortes.filter(porte => porte.PK_Num <= targetPk);
+            // Trier toutes les portes filtrées par PK descendant
+            filteredPortes.sort((a, b) => b.PK_Num - a.PK_Num);
 
-            if (relevantPortes.length > 0) {
-                // Trier les portes pertinentes par PK descendant pour trouver la plus proche avant le PK actuel
-                relevantPortes.sort((a, b) => b.PK_Num - a.PK_Num);
-                closestPorte = relevantPortes[0]; // La première avant ou au PK
+            // Trouver les portes accessibles (PK_Num >= targetPk)
+            const accessiblePortes = filteredPortes.filter(porte => porte.PK_Num >= targetPk);
+
+            if (accessiblePortes.length > 0) {
+                // La porte idéale est la dernière accessible (PK le plus bas >= targetPk)
+                idealPorte = accessiblePortes[accessiblePortes.length - 1];
+
+                // La porte de repli est l'avant-dernier accessible, si elle existe
+                if (accessiblePortes.length >= 2) {
+                    fallbackPorte = accessiblePortes[accessiblePortes.length - 2];
+                }
             } else {
-                // Si aucune porte n'est trouvée avant le PK (on a dépassé toutes les portes)
-                // On peut décider de montrer la dernière porte de la liste (la plus basse)
-                // Ou afficher un message spécifique. Ici, on prend la dernière du sens filtré.
-                filteredPortes.sort((a, b) => a.PK_Num - b.PK_Num); // Trier par PK ascendant pour trouver la dernière
-                closestPorte = filteredPortes[0];
-                resultsDiv.innerHTML += '<p style="color: orange;">Vous avez dépassé toutes les portes dans ce sens. Affichage de la dernière porte disponible.</p>';
+                // Si aucune porte n'est accessible (toutes sont avant le PK cible)
+                // L'idéal est la première porte du segment (celle avec le plus grand PK)
+                idealPorte = filteredPortes[0];
+                resultsDiv.innerHTML += '<p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>';
             }
         }
 
-        // --- Affichage des résultats (inchangé) ---
-        if (closestPorte) {
-            const latitude = parseFloat(closestPorte.Latitude.trim());
-            const longitude = parseFloat(closestPorte.Longitude.trim()); // Correction: plus d'espace à Longitude
+        // --- AFFICHAGE DES RÉSULTATS (incluant la porte de repli) ---
+        if (idealPorte) {
+            // Calculer la distance entre le PK visé et la porte idéale
+            const distanceToIdeal = Math.abs(targetPk - idealPorte.PK_Num);
+            const shouldHighlightFallback = distanceToIdeal < 0.3; // Condition pour la mise en évidence
 
-            const mapLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-
-            resultsDiv.innerHTML += `
+            let htmlContent = `
                 <div class="result-item">
-                    <p><strong>Autoroute :</strong> ${closestPorte.Autoroute}</p>
-                    <p><strong>Sens :</strong> ${closestPorte.Sens}</p>
-                    <p><strong>PK le plus proche :</strong> ${closestPorte.PK}</p>
-                    <p><strong>Type d'accès :</strong> ${closestPorte['Type d\'accès'] || 'Non spécifié'}</p>
-                    <p><strong>Commentaires :</strong> ${closestPorte['Commentaires'] || 'Aucun'}</p>
-                    <p><strong>Route d'accès :</strong> ${closestPorte['Route d\'accès'] || 'Non spécifié'}</p>
-                    ${closestPorte.Photo && closestPorte.Photo !== 'à définir' ? `<p><a href="${closestPorte.Photo}" target="_blank">Voir la photo</a></p>` : ''}
-                    <a href="${mapLink}" target="_blank" class="map-link">Voir sur Google Maps</a>
+                    <h3>Porte Idéale :</h3>
+                    <p><strong>Autoroute :</strong> ${idealPorte.Autoroute}</p>
+                    <p><strong>Sens :</strong> ${idealPorte.Sens}</p>
+                    <p><strong>PK :</strong> ${idealPorte.PK}</p>
+                    <p><strong>Type d'accès :</strong> ${idealPorte['Type d\'accès'] || 'Non spécifié'}</p>
+                    <p><strong>Commentaires :</strong> ${idealPorte['Commentaires'] || 'Aucun'}</p>
+                    <p><strong>Route d'accès :</strong> ${idealPorte['Route d\'accès'] || 'Non spécifié'}</p>
+                    ${idealPorte.Photo && idealPorte.Photo !== 'à définir' ? `<p><a href="${idealPorte.Photo}" target="_blank">Voir la photo</a></p>` : ''}
+                    <a href="https://www.google.com/maps/search/?api=1&query=${idealPorte.Latitude.trim()},${idealPorte.Longitude.trim()}" target="_blank" class="map-link">Voir sur Google Maps</a>
                 </div>
             `;
+
+            if (fallbackPorte) {
+                const fallbackClass = shouldHighlightFallback ? 'fallback-link' : 'map-link'; // Utilise la même classe de base pour le style par défaut
+                const fallbackTitle = shouldHighlightFallback ? 'PORTE DE REPLI (Attention, idéal très proche !) :' : 'Porte de Repli possible :';
+
+                htmlContent += `
+                    <div class="result-item">
+                        <h3>${fallbackTitle}</h3>
+                        <p><strong>Autoroute :</strong> ${fallbackPorte.Autoroute}</p>
+                        <p><strong>Sens :</strong> ${fallbackPorte.Sens}</p>
+                        <p><strong>PK :</strong> ${fallbackPorte.PK}</p>
+                        <p><strong>Type d'accès :</strong> ${fallbackPorte['Type d\'accès'] || 'Non spécifié'}</p>
+                        <p><strong>Commentaires :</strong> ${fallbackPorte['Commentaires'] || 'Aucun'}</p>
+                        <p><strong>Route d'accès :</strong> ${fallbackPorte['Route d\'accès'] || 'Non spécifié'}</p>
+                        ${fallbackPorte.Photo && fallbackPorte.Photo !== 'à définir' ? `<p><a href="${fallbackPorte.Photo}" target="_blank">Voir la photo</a></p>` : ''}
+                        <a href="https://www.google.com/maps/search/?api=1&query=${fallbackPorte.Latitude.trim()},${fallbackPorte.Longitude.trim()}" target="_blank" class="${fallbackClass}">Voir sur Google Maps</a>
+                    </div>
+                `;
+            } else if (accessiblePortes.length === 1 && accessiblePortes[0] === idealPorte && distanceToIdeal < 0.3) {
+                 // Cas où il n'y a qu'une seule porte accessible (l'idéale) et elle est très proche
+                htmlContent += `<p style="color: orange;">Attention : C'est la seule porte accessible restante dans ce sens et elle est très proche de votre PK actuel (${distanceToIdeal.toFixed(2)} km).</p>`;
+            }
+
+
+            resultsDiv.innerHTML += htmlContent;
+
         } else {
-            // Ce cas devrait être rare avec la nouvelle logique, mais on le garde pour la robustesse
             resultsDiv.innerHTML += '<p style="color: orange;">Aucune porte trouvée correspondant à vos critères.</p>';
         }
     });
