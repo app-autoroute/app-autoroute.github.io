@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong>Commentaires :</strong> ${closestAccess['Commentaires'] || 'Aucun'}</p>
                     <p><strong>Route d'accès :</strong> ${closestAccess['Route d\'accès'] || 'Non spécifié'}</p>
                     ${closestAccess.Photo && closestAccess.Photo !== 'à définir' ? `<p><a href="${closestAccess.Photo}" target="_blank">Voir la photo</a></p>` : ''}
-                    <a href="https://www.google.com/maps/search/?api=1&query=${closestAccess.Latitude.trim()},${closestAccess.Longitude.trim()}" target="_blank" class="map-link">Voir sur Google Maps</a>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${closestAccess.Latitude.trim()},${closestAccess.Longitude.trim()}" target="_blank" class="map-link">Ouvrir sur Google Maps</a>
             `;
             if (distanceToClosest < 0.3) {
                 htmlContent += `<span class="proximity-alert">Cet accès est à moins de 300m de votre cible (${(distanceToClosest * 1000).toFixed(0)} m).</span>`;
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Ajout du trait horizontal si l'accès précédent existe
             if (previousAccess) {
-                htmlContent += `<hr style="margin: 20px 0; border-top: 1px dashed var(--results-border);">`; // Ajout du trait horizontal
+                htmlContent += `<hr>`; // Le style est maintenant dans style.css
 
                 htmlContent += `
                     <div class="result-item">
@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p><strong>Commentaires :</strong> ${previousAccess['Commentaires'] || 'Aucun'}</p>
                         <p><strong>Route d'accès :</strong> ${previousAccess['Route d\'accès'] || 'Non spécifié'}</p>
                         ${previousAccess.Photo && previousAccess.Photo !== 'à définir' ? `<p><a href="${previousAccess.Photo}" target="_blank">Voir la photo</a></p>` : ''}
-                        <a href="https://www.google.com/maps/search/?api=1&query=${previousAccess.Latitude.trim()},${previousAccess.Longitude.trim()}" target="_blank" class="map-link">Voir sur Google Maps</a>
+                        <a href="https://www.google.com/maps/search/?api=1&query=${previousAccess.Latitude.trim()},${previousAccess.Longitude.trim()}" target="_blank" class="map-link">Ouvrir sur Google Maps</a>
                     </div>
                 `;
             }

@@ -381,6 +381,16 @@ button#searchButton:hover {
     background-color: var(--map-link-hover-bg);
 }
 
+/* Style pour la ligne horizontale de séparation */
+#results hr {
+    margin: 25px 0; /* Plus d'espace autour */
+    border: none; /* Réinitialise le style par défaut */
+    border-top: 2px solid var(--results-border); /* Ligne pleine et un peu plus épaisse */
+    opacity: 0.7; /* Légèrement transparente */
+    transition: border-color 0.5s ease; /* Transition douce avec le thème */
+}
+
+
 /* Style pour l'annotation de proximité */
 .proximity-alert {
     color: var(--proximity-alert-color); /* Utilise la variable de couleur pour l'alerte */
