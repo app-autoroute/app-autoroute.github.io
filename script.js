@@ -7,11 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsDiv = document.getElementById('results');
     const resetButton = document.getElementById('resetButton');
     const themeSwitch = document.getElementById('checkbox');
-    const settingsButton = document.getElementById('settingsButton');
-    const settingsModal = document.getElementById('settingsModal');
-    const closeModalButton = settingsModal.querySelector('.close-button');
-    const autorouteCheckboxesContainer = document.getElementById('autorouteCheckboxes');
-    const saveSettingsButton = document.getElementById('saveSettingsButton');
+    const settingsButton = document.getElementById('settingsButton'); // Ce bouton est toujours présent dans l'HTML, mais sans fonction ici
 
     // Déclaration des autoroutes et sens (ajoutez toutes les autoroutes nécessaires ici)
     const allAutoroutes = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10', 'A11', 'A13', 'A16', 'A19', 'A20', 'A21', 'A25', 'A26', 'A28', 'A29', 'A31', 'A34', 'A35', 'A36', 'A39', 'A40', 'A41', 'A42', 'A43', 'A46', 'A47', 'A48', 'A49', 'A50', 'A51', 'A52', 'A54', 'A55', 'A57', 'A61', 'A62', 'A63', 'A64', 'A65', 'A66', 'A68', 'A71', 'A72', 'A75', 'A77', 'A79', 'A81', 'A82', 'A83', 'A84', 'A85', 'A86', 'A87', 'A88', 'A89'];
@@ -39,56 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Fonctions de gestion de la modale des paramètres ---
-    function openSettingsModal() {
-        settingsModal.style.display = 'flex'; // Utilise flex pour centrer
-        generateAutorouteCheckboxes(); // Génère les checkboxes à l'ouverture
-    }
-
-    function closeSettingsModal() {
-        settingsModal.style.display = 'none';
-    }
-
-    // Génère les checkboxes des autoroutes dans la modale
-    function generateAutorouteCheckboxes() {
-        autorouteCheckboxesContainer.innerHTML = ''; // Vide le conteneur avant de regénérer
-        const savedFavorites = getFavoriteAutoroutes();
-
-        allAutoroutes.forEach(autoroute => {
-            const label = document.createElement('label');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.value = autoroute;
-            checkbox.checked = savedFavorites.includes(autoroute); // Coche si elle est favorite
-
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(autoroute));
-            autorouteCheckboxesContainer.appendChild(label);
-        });
-    }
-
-    // Récupère les autoroutes favorites du stockage local
-    function getFavoriteAutoroutes() {
-        const favorites = localStorage.getItem('favoriteAutoroutes');
-        return favorites ? JSON.parse(favorites) : allAutoroutes; // Par défaut, toutes sont favorites
-    }
-
-    // Sauvegarde les autoroutes favorites dans le stockage local
-    function saveFavoriteAutoroutes() {
-        const checkboxes = autorouteCheckboxesContainer.querySelectorAll('input[type="checkbox"]:checked');
-        const favoritesToSave = Array.from(checkboxes).map(cb => cb.value);
-        localStorage.setItem('favoriteAutoroutes', JSON.stringify(favoritesToSave));
-        renderAutorouteButtons(); // Met à jour les boutons sur la page principale
-        closeSettingsModal(); // Ferme la modale après sauvegarde
-    }
-
     // --- Fonctions de rendu des boutons Autoroute et Direction ---
     function renderAutorouteButtons() {
         autorouteButtonsContainer.innerHTML = ''; // Vide le conteneur
-        const favorites = getFavoriteAutoroutes(); // Récupère les autoroutes favorites
-        const autoroutesToDisplay = favorites.length > 0 ? favorites : allAutoroutes; // Affiche favorites, sinon toutes
-
-        autoroutesToDisplay.forEach(autoroute => {
+        allAutoroutes.forEach(autoroute => { // Affiche TOUTES les autoroutes
             const button = document.createElement('button');
             button.classList.add('autoroute-button');
             button.textContent = autoroute;
@@ -188,17 +138,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Écouteurs d'événements ---
     resetButton.addEventListener('click', resetForm);
-    settingsButton.addEventListener('click', openSettingsModal);
-    closeModalButton.addEventListener('click', closeSettingsModal);
-    // Fermer la modale si l'utilisateur clique en dehors du contenu
-    window.addEventListener('click', (event) => {
-        if (event.target === settingsModal) {
-            closeSettingsModal();
-        }
-    });
-    saveSettingsButton.addEventListener('click', saveFavoriteAutoroutes);
+    // Note: settingsButton n'aura pas d'écouteur d'événements ici et ne fera rien au clic.
+    // Les écouteurs pour la modale et les checkboxes de la modale sont retirés.
 
     // Initialisation
-    renderAutorouteButtons(); // Affiche les boutons d'autoroute au chargement (selon les favoris)
+    renderAutorouteButtons(); // Affiche tous les boutons d'autoroute
     renderDirectionButtons(); // Affiche les boutons de direction
 });
