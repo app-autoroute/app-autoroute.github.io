@@ -14,7 +14,7 @@
         <div class="action-buttons-top-right">
             <button id="settingsButton" class="settings-button" title="Paramètres">
                 <svg class="settings-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM12 0c-6.63 0-12 5.37-12 12s5.37 12 12 12 12-5.37 12-12-5.37-12-12-12zm0 22c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zM12 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                    <path d="M19.438 16.077c.486-.876.764-1.892.764-2.98s-.278-2.104-.764-2.98l1.458-1.298c.178-.158.237-.417.15-.634l-1.571-2.721a.5.5 0 0 0-.698-.216l-1.891.75c-.563-.426-1.22-.76-1.92-1l-.271-2.036a.5.5 0 0 0-.49-.434h-3.142a.5.5 0 0 0-.49.434l-.271 2.036c-.7.24-1.357.574-1.92 1l-1.891-.75a.5.5 0 0 0-.698.216l-1.571 2.721a.5.5 0 0 0 .15.634l1.458 1.298c-.486.876-.764 1.892-.764 2.98s.278 2.104.764 2.98l-1.458 1.298a.5.5 0 0 0-.15.634l1.571 2.721a.5.5 0 0 0 .698.216l1.891-.75c.563.426 1.22.76 1.92 1l.271 2.036a.5.5 0 0 0 .49.434h3.142a.5.5 0 0 0 .49-.434l.271-2.036c.7-.24 1.357-.574 1.92-1l1.891.75a.5.5 0 0 0 .698-.216l1.571-2.721a.5.5 0 0 0-.15-.634l-1.458-1.298zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
                 </svg>
             </button>
             <button id="resetButton" class="reset-button">Réinitialiser</button>
@@ -31,11 +31,6 @@
         </div>
 
         <div class="input-group">
-            <label for="pkInput">Point Kilométrique (PK):</label>
-            <input type="number" id="pkInput" placeholder="Ex: 123.45">
-        </div>
-
-        <div class="input-group">
             <label>Autoroute:</label>
             <div id="autorouteButtons" class="autoroute-buttons">
                 </div>
@@ -45,6 +40,11 @@
             <label>Sens de circulation:</label>
             <div id="directionButtons" class="direction-buttons">
                 </div>
+        </div>
+
+        <div class="input-group">
+            <label for="pkInput">Point Kilométrique (PK):</label>
+            <input type="number" id="pkInput" placeholder="Ex: 123.45">
         </div>
 
         <button id="searchButton">Rechercher l'accès le plus proche</button>

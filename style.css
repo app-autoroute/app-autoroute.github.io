@@ -117,7 +117,7 @@ h1 {
     transition: color 0.5s ease, text-shadow 0.5s ease; /* Transition douce */
 }
 
-/* NOUVEAU: Conteneur pour les boutons d'action en haut à droite */
+/* Conteneur pour les boutons d'action en haut à droite */
 .action-buttons-top-right {
     position: absolute;
     top: 15px; /* Ajuster la distance du haut */
