@@ -105,7 +105,7 @@ body.light-mode {
     max-width: 500px;
     margin-top: 50px;
     border: 3px solid var(--container-border);
-    position: relative; /* Important pour positionner les boutons absoluement */
+    position: relative; /* Important pour positionner les éléments internes si besoin */
     overflow: hidden;
     transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease; /* Transition douce */
 }
@@ -117,15 +117,14 @@ h1 {
     transition: color 0.5s ease, text-shadow 0.5s ease; /* Transition douce */
 }
 
-/* Conteneur pour les boutons d'action en haut à droite */
-.action-buttons-top-right {
-    position: absolute;
-    top: 15px; /* Ajuster la distance du haut */
-    right: 15px; /* Ajuster la distance de la droite */
-    display: flex; /* Utiliser flex pour aligner les boutons */
-    align-items: center; /* Centrer verticalement les éléments à l'intérieur */
-    gap: 10px; /* Espace entre les boutons */
-    z-index: 5; /* S'assurer qu'ils sont au-dessus des autres éléments si nécessaire */
+/* NOUVEAU: Conteneur pour les contrôles du haut */
+.top-controls {
+    display: flex;
+    justify-content: center; /* Centre les éléments horizontalement */
+    align-items: center; /* Centre les éléments verticalement */
+    gap: 15px; /* Espace entre les éléments */
+    margin-bottom: 20px; /* Espace sous cette ligne de contrôles */
+    flex-wrap: wrap; /* Permet aux éléments de passer à la ligne sur petits écrans */
 }
 
 /* Style de base pour le bouton Réinitialiser (texte) */
@@ -295,8 +294,8 @@ input[type="number"]::placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
     gap: 10px;
+    /* margin-bottom: 20px; Supprimé car géré par top-controls */
 }
 
 .theme-switch {
