@@ -2,177 +2,193 @@
   {
     "Autoroute": "A16",
     "Sens": "Paris → Boulogne",
-    "PK": "82,20",
+    "PK": "82.20",
     "Type d'accès": "Porte 137",
     "Commentaires": "Prendre la D1001, à Bois Saint Martin, à gauche",
     "Route d'accès": "D9 (Haudivillers - Abbeville-St-Lucien)",
     "Photo": "à définir",
     "Latitude": "49.515",
-    "Longitude ": "2.186667 "
+    "Longitude": "2.186667",
+    "ProgressionPK": "Ascendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Boulogne → Paris",
-    "PK": "82,50",
+    "PK": "82.50",
     "Type d'accès": "Porte 138",
     "Commentaires": "Prendre la D1001, à Bois Saint Martin, à gauche",
     "Route d'accès": "D9 (Haudivillers - Abbeville-St-Lucien)",
     "Photo": "à définir",
     "Latitude": "49.516556",
-    "Longitude ": "2.184056 "
+    "Longitude": "2.184056",
+    "ProgressionPK": "Descendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Paris → Boulogne",
-    "PK": "84,85",
+    "PK": "84.85",
     "Type d'accès": "Porte 139",
     "Commentaires": "Prendre la D1001, puis à droite direction Maulers",
     "Route d'accès": "C1 (D1001 - Maulers)",
     "Photo": "à définir",
     "Latitude": "49.538472",
-    "Longitude ": "2.186806 "
+    "Longitude": "2.186806",
+    "ProgressionPK": "Ascendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Boulogne → Paris",
-    "PK": "85,08",
+    "PK": "85.08",
     "Type d'accès": "Porte 140",
     "Commentaires": "Prendre la D1001, puis à droite direction Maulers",
     "Route d'accès": "C1 (D1001 - Maulers)",
     "Photo": "à définir",
     "Latitude": "49.539972",
-    "Longitude ": "2.184416 "
+    "Longitude": "2.184416",
+    "ProgressionPK": "Descendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Paris → Boulogne",
-    "PK": "88,43",
+    "PK": "88.43",
     "Type d'accès": "Porte 141",
     "Commentaires": "A Froissy, prendre direction Crevecoeur",
     "Route d'accès": "D151 (Froissy - Crevecoeur)",
     "Photo": "à définir",
     "Latitude": "49.569750",
-    "Longitude ": "2.199472 "
+    "Longitude": "2.199472",
+    "ProgressionPK": "Ascendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Boulogne → Paris",
-    "PK": "88,66",
+    "PK": "88.66",
     "Type d'accès": "Porte 142",
     "Commentaires": "A Froissy, prendre direction Crevecoeur",
     "Route d'accès": "D151 (Froissy - Crevecoeur)",
     "Photo": "à définir",
     "Latitude": "49.570250",
-    "Longitude ": "2.197861 "
+    "Longitude": "2.197861",
+    "ProgressionPK": "Descendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Paris → Boulogne",
-    "PK": "92,10",
+    "PK": "92.10",
     "Type d'accès": "Accès autoroute",
     "Commentaires": "Péage Hardivillers",
     "Route d'accès": "D930 Péage Hardivillers",
     "Photo": "à définir",
     "Latitude": "49.604028",
-    "Longitude ": "2.204778 "
+    "Longitude": "2.204778",
+    "ProgressionPK": "Ascendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Boulogne → Paris",
-    "PK": "92,20",
+    "PK": "92.20",
     "Type d'accès": "Accès autoroute",
     "Commentaires": "Péage Hardivillers",
     "Route d'accès": "D930 Péage Hardivillers",
     "Photo": "à définir",
     "Latitude": "49.602833",
-    "Longitude ": "2.203750 "
+    "Longitude": "2.203750",
+    "ProgressionPK": "Descendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Paris → Boulogne",
-    "PK": "93,30",
+    "PK": "93.30",
     "Type d'accès": "Porte 143",
-    "Commentaires": null,
+    "Commentaires": "",
     "Route d'accès": "D930 (Breteuil - Crèvecœur)",
     "Photo": "à définir",
     "Latitude": "49.612694",
-    "Longitude ": "2.209389 "
+    "Longitude": "2.209389",
+    "ProgressionPK": "Ascendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Boulogne → Paris",
-    "PK": "93,50",
+    "PK": "93.50",
     "Type d'accès": "Porte 144",
-    "Commentaires": null,
+    "Commentaires": "",
     "Route d'accès": "D930 (Breteuil - Crèvecœur)",
     "Photo": "à définir",
     "Latitude": "49.612861",
-    "Longitude ": "2.203056 "
+    "Longitude": "2.203056",
+    "ProgressionPK": "Descendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Paris → Boulogne",
-    "PK": "95,85",
+    "PK": "95.85",
     "Type d'accès": "Porte 145 ?",
     "Commentaires": "Route Breteuil - Cormeille",
     "Route d'accès": "D65 (Breteuil - Cormeilles)",
     "Photo": "à définir",
     "Latitude": "49.635028",
-    "Longitude ": "2.211806 "
+    "Longitude": "2.211806",
+    "ProgressionPK": "Ascendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Boulogne → Paris",
-    "PK": "96,10",
+    "PK": "96.10",
     "Type d'accès": "Porte 146 ?",
     "Commentaires": "Route Breteuil - Cormeille",
     "Route d'accès": "D65 (Breteuil - Cormeilles)",
     "Photo": "à définir",
     "Latitude": "49.635250",
-    "Longitude ": "2.209722 "
+    "Longitude": "2.209722",
+    "ProgressionPK": "Descendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Boulogne → Paris",
-    "PK": "100,90",
+    "PK": "100.90",
     "Type d'accès": "Porte 150",
     "Commentaires": "Route Bonneuil - Croissy-sur-selle",
     "Route d'accès": "D38 (Bonneuil - Croissy-sur-selle)",
     "Photo": "à définir",
     "Latitude": "49.679028",
-    "Longitude ": "2.213139 "
+    "Longitude": "2.213139",
+    "ProgressionPK": "Descendant"
   },
   {
     "Autoroute": "A16",
     "Sens": "Paris → Boulogne",
-    "PK": "101,29",
+    "PK": "101.29",
     "Type d'accès": "Porte 149",
     "Commentaires": "Route Bonneuil - Croissy-sur-selle",
     "Route d'accès": "D38 (Bonneuil - Croissy-sur-selle)",
     "Photo": "à définir",
     "Latitude": "49.679722",
-    "Longitude ": "2.216528 "
+    "Longitude": "2.216528",
+    "ProgressionPK": "Ascendant"
   },
   {
     "Autoroute": "A1",
     "Sens": "Paris → Lille",
-    "PK": "0,00",
+    "PK": "0.00",
     "Type d'accès": "Accès autoroute",
     "Commentaires": "Péage Arsy",
     "Route d'accès": "N31 Péage Arsy",
     "Photo": "à définir",
     "Latitude": "49.399611",
-    "Longitude ": "2.699194 "
+    "Longitude": "2.699194",
+    "ProgressionPK": "Ascendant"
   },
   {
     "Autoroute": "A1",
     "Sens": "Lille → Paris",
-    "PK": "66,10",
+    "PK": "66.10",
     "Type d'accès": "Accès autoroute",
     "Commentaires": "Péage Arsy",
     "Route d'accès": "N31 Péage Arsy",
     "Photo": "à définir",
     "Latitude": "49.399611",
-    "Longitude ": "2.699194 "
+    "Longitude": "2.699194",
+    "ProgressionPK": "Descendant"
   }
 ]
