@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Écouteur d'événement pour le bouton Réinitialiser ---
     resetButton.addEventListener('click', resetForm);
 
-    // --- Fonction de recherche de la porte la plus proche (LOGIQUE MISE À JOUR) ---
+    // --- Fonction de recherche de la porte la plus proche ---
     searchButton.addEventListener('click', () => {
         const targetPk = parseFloat(pkInput.value.replace(',', '.'));
 
@@ -210,8 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let closestAccess = null; // Renommée de idealPorte en closestAccess
-        let previousAccess = null; // Renommée de fallbackPorte en previousAccess
+        let closestAccess = null;
+        let previousAccess = null;
 
         const progressionPK = filteredPortes[0] ? filteredPortes[0].ProgressionPK : null;
 
@@ -222,45 +222,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- DÉTERMINATION DE L'ACCÈS LE PLUS PROCHE ET DE L'ACCÈS PRÉCÉDENT ---
         if (progressionPK === "Ascendant") {
-            // Trier toutes les portes filtrées par PK ascendant
             filteredPortes.sort((a, b) => a.PK_Num - b.PK_Num);
-
-            // Trouver les portes accessibles (PK_Num <= targetPk)
             const accessiblePortes = filteredPortes.filter(porte => porte.PK_Num <= targetPk);
 
             if (accessiblePortes.length > 0) {
-                // L'accès le plus proche est la dernière accessible (PK le plus élevé <= targetPk)
                 closestAccess = accessiblePortes[accessiblePortes.length - 1];
-                
-                // L'accès précédent est l'avant-dernière accessible, si elle existe
                 if (accessiblePortes.length >= 2) {
                     previousAccess = accessiblePortes[accessiblePortes.length - 2];
                 }
             } else {
-                // Si aucune porte n'est accessible (toutes sont après le PK cible)
-                // L'accès le plus proche est la première porte du segment (celle avec le plus petit PK)
                 closestAccess = filteredPortes[0];
                 resultsDiv.innerHTML += '<p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>';
             }
 
         } else if (progressionPK === "Descendant") {
-            // Trier toutes les portes filtrées par PK descendant
             filteredPortes.sort((a, b) => b.PK_Num - a.PK_Num);
-
-            // Trouver les portes accessibles (PK_Num >= targetPk)
             const accessiblePortes = filteredPortes.filter(porte => porte.PK_Num >= targetPk);
 
             if (accessiblePortes.length > 0) {
-                // L'accès le plus proche est la dernière accessible (PK le plus bas >= targetPk)
                 closestAccess = accessiblePortes[accessiblePortes.length - 1];
-
-                // L'accès précédent est l'avant-dernier accessible, si elle existe
                 if (accessiblePortes.length >= 2) {
                     previousAccess = accessiblePortes[accessiblePortes.length - 2];
                 }
             } else {
-                // Si aucune porte n'est accessible (toutes sont avant le PK cible)
-                // L'accès le plus proche est la première porte du segment (celle avec le plus grand PK)
                 closestAccess = filteredPortes[0];
                 resultsDiv.innerHTML += '<p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>';
             }
@@ -270,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (closestAccess) {
             let htmlContent = '';
             
-            // Calculer la distance entre le PK visé et l'accès le plus proche
             const distanceToClosest = Math.abs(targetPk - closestAccess.PK_Num);
 
             htmlContent += `
@@ -285,14 +268,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${closestAccess.Photo && closestAccess.Photo !== 'à définir' ? `<p><a href="${closestAccess.Photo}" target="_blank">Voir la photo</a></p>` : ''}
                     <a href="https://www.google.com/maps/search/?api=1&query=${closestAccess.Latitude.trim()},${closestAccess.Longitude.trim()}" target="_blank" class="map-link">Voir sur Google Maps</a>
             `;
-            // Ajout de l'annotation si la distance est < 300m
             if (distanceToClosest < 0.3) {
                 htmlContent += `<span class="proximity-alert">Cet accès est à moins de 300m de votre cible (${(distanceToClosest * 1000).toFixed(0)} m).</span>`;
             }
             htmlContent += `</div>`; // Fermeture du result-item
 
-
+            // Ajout du trait horizontal si l'accès précédent existe
             if (previousAccess) {
+                htmlContent += `<hr style="margin: 20px 0; border-top: 1px dashed var(--results-border);">`; // Ajout du trait horizontal
+
                 htmlContent += `
                     <div class="result-item">
                         <h3>Accès précédent :</h3>
