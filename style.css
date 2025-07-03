@@ -40,7 +40,6 @@ body {
     --input-group-bg: rgba(34, 34, 34, 0.9); /* Fond pour les input-group */
     --input-group-border: #880000; /* Bordure pour les input-group */
     --input-group-shadow: rgba(255, 0, 0, 0.3); /* Ombre pour les input-group */
-    --select-arrow-color: #f0f0f0; /* Couleur de la flèche du select */
 }
 
 /* Application des variables de thème */
@@ -91,7 +90,6 @@ body.light-mode {
     --input-group-bg: rgba(240, 240, 240, 0.9); /* Fond clair pour les input-group */
     --input-group-border: #0056b3; /* Bordure claire pour les input-group */
     --input-group-shadow: rgba(0, 123, 255, 0.1); /* Ombre claire pour les input-group */
-    --select-arrow-color: #333; /* Couleur de la flèche du select */
 }
 
 /* Conteneur principal de l'application */
@@ -112,10 +110,38 @@ body.light-mode {
 
 h1 {
     color: var(--h1-color);
-    margin-bottom: 25px;
+    margin-bottom: 15px; /* Réduire la marge pour le bouton Réinitialiser */
     text-shadow: 2px 2px 5px var(--h1-shadow);
     transition: color 0.5s ease, text-shadow 0.5s ease; /* Transition douce */
 }
+
+/* Style pour le bouton Réinitialiser */
+.reset-button {
+    background-color: #6c757d; /* Gris par défaut */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.reset-button:hover {
+    background-color: #5a6268; /* Gris plus foncé au survol */
+    transform: translateY(-2px);
+}
+
+/* Ajustement des couleurs du bouton Réinitialiser pour le mode Jour */
+body.light-mode .reset-button {
+    background-color: #818e96;
+}
+
+body.light-mode .reset-button:hover {
+    background-color: #6c757d;
+}
+
 
 .input-group {
     margin-bottom: 20px;
@@ -317,3 +343,46 @@ button#searchButton:hover {
     color: var(--results-text);
     box-shadow: 0 0 20px var(--results-shadow);
     transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease; /* Transition douce */
+}
+
+#results h2 {
+    color: var(--results-h2-color);
+    margin-top: 0;
+    border-bottom: 2px solid var(--results-h2-border);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    transition: color 0.5s ease, border-color 0.5s ease; /* Transition douce */
+}
+
+.result-item {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.result-item strong {
+    color: var(--results-strong-text);
+    transition: color 0.5s ease; /* Transition douce */
+}
+
+.map-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: var(--map-link-bg);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.map-link:hover {
+    background-color: var(--map-link-hover-bg);
+}
+
+/* Styles pour les messages d'erreur/information */
+p[style*="color: red;"],
+p[style*="color: orange;"] {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 15px;
+}
