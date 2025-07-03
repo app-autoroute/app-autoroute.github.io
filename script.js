@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const THEME_KEY = LOCAL_STORAGE_PREFIX + 'theme';
 
     // --- Fonction utilitaire pour afficher les résultats ---
-    // Cette fonction s'assure que la div des résultats est visible avant d'y injecter du contenu
     function displayResults(content) {
         resultsDiv.innerHTML = content;
         resultsDiv.style.display = 'block'; // Rend le cadre visible
@@ -63,10 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Données chargées et PK convertis :', portesData);
             populateAutorouteButtons();
             loadLastSelections();
-            // Au chargement initial, les résultats sont masqués
-            hideResults();
+            hideResults(); // Masque les résultats au chargement initial
         } catch (error) {
             console.error('Erreur lors du chargement des données des portes :', error);
+            // Affiche l'erreur si les données ne peuvent pas être chargées
             displayResults('<h2>Erreur</h2><p style="color: red;">Impossible de charger les données des portes. Veuillez réessayer plus tard.</p>');
         }
     }
@@ -92,8 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedAutoroute = autoroute;
                 localStorage.setItem(LAST_AUTOROUTE_KEY, autoroute);
                 updateDirectionButtons();
-                // Afficher un message après la sélection d'une autoroute
-                displayResults('<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>');
+                // NOUVEAU : Ne pas afficher de message ici, la section reste masquée
+                hideResults();
             });
             autorouteButtonsContainer.appendChild(button);
         });
@@ -107,8 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!selectedAutoroute) {
             directionButtonsContainer.innerHTML = '<p>Veuillez sélectionner une autoroute d\'abord.</p>';
             localStorage.removeItem(LAST_DIRECTION_KEY);
-            // Laisser resultsDiv masquée si pas d'autoroute sélectionnée
-            hideResults();
+            hideResults(); // NOUVEAU : S'assurer que le cadre est masqué
             return;
         }
 
@@ -119,8 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (uniqueSens.length === 0) {
             directionButtonsContainer.innerHTML = '<p>Aucun sens disponible pour cette autoroute.</p>';
             localStorage.removeItem(LAST_DIRECTION_KEY);
-            // Afficher un message spécifique si pas de sens disponible
-            displayResults('<h2>Résultats de la recherche</h2><p style="color: orange;">Aucun sens disponible pour cette autoroute.</p>');
+            // NOUVEAU : S'assurer que le cadre est masqué si pas de sens
+            hideResults();
             return;
         }
 
@@ -134,8 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 button.classList.add('selected');
                 selectedDirection = sens;
                 localStorage.setItem(LAST_DIRECTION_KEY, sens);
-                // Afficher un message après la sélection d'un sens
-                displayResults('<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>');
+                // NOUVEAU : Ne pas afficher de message ici, la section reste masquée
+                hideResults();
             });
             directionButtonsContainer.appendChild(button);
         });
@@ -165,13 +163,14 @@ document.addEventListener('DOMContentLoaded', () => {
             pkInput.value = lastPk;
         }
 
-        // Si une recherche complète peut être lancée au démarrage, on la lance
+        // Si une recherche complète peut être lancée au démarrage, on la lance.
+        // C'est le bouton de recherche qui rendra la div visible.
         setTimeout(() => {
             if (selectedAutoroute && selectedDirection && pkInput.value) {
                 searchButton.click();
-            } else if (selectedAutoroute) {
-                // Si une autoroute est sélectionnée mais pas encore de direction ou PK, on affiche le message approprié
-                displayResults('<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>');
+            } else {
+                // NOUVEAU : Si pas de recherche automatique, on s'assure que le cadre reste masqué
+                hideResults();
             }
         }, 100);
     }
@@ -190,8 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem(LAST_PK_KEY);
 
         updateDirectionButtons();
-        // Masquer complètement la section des résultats après réinitialisation
-        hideResults();
+        hideResults(); // Masque complètement la section des résultats après réinitialisation
     }
 
     // --- Écouteur d'événement pour le bouton Réinitialiser ---
@@ -201,8 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
     searchButton.addEventListener('click', () => {
         const targetPk = parseFloat(pkInput.value.replace(',', '.'));
 
-        // Avant d'afficher quoi que ce soit, vide et prépare la div des résultats
-        resultsDiv.innerHTML = '';
+        // Chaque fois que le bouton de recherche est cliqué, on réinitialise et prépare l'affichage
+        resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2>'; // Toujours afficher ce titre avant les messages d'erreur ou les résultats
         resultsDiv.style.display = 'block'; // Assurez-vous qu'elle est visible pour afficher les messages/résultats
 
         if (!isNaN(targetPk)) {
@@ -257,9 +255,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     previousAccess = accessiblePortes[accessiblePortes.length - 2];
                 }
             } else {
-                closestAccess = filteredPortes[0];
                 displayResults('<h2>Résultats de la recherche</h2><p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>');
-                return; // Important: arrêter ici si on affiche ce message
+                return;
             }
 
         } else if (progressionPK === "Descendant") {
@@ -272,9 +269,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     previousAccess = accessiblePortes[accessiblePortes.length - 2];
                 }
             } else {
-                closestAccess = filteredPortes[0];
                 displayResults('<h2>Résultats de la recherche</h2><p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>');
-                return; // Important: arrêter ici si on affiche ce message
+                return;
             }
         }
 
