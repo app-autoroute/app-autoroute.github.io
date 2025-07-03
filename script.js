@@ -50,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Données chargées et PK convertis :', portesData);
             populateAutorouteButtons();
             loadLastSelections();
+            // Initialisation de la div results - Elle est vide par défaut maintenant
+            resultsDiv.innerHTML = '';
         } catch (error) {
             console.error('Erreur lors du chargement des données des portes :', error);
             resultsDiv.innerHTML = '<h2>Erreur</h2><p style="color: red;">Impossible de charger les données des portes. Veuillez réessayer plus tard.</p>';
@@ -77,11 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedAutoroute = autoroute;
                 localStorage.setItem(LAST_AUTOROUTE_KEY, autoroute);
                 updateDirectionButtons();
+                // Afficher un message après la sélection d'une autoroute
+                resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>';
             });
             autorouteButtonsContainer.appendChild(button);
         });
-
-        resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Sélectionnez une autoroute et entrez un PK pour trouver une porte.</p>';
     }
 
     // --- Fonction pour mettre à jour les boutons de direction ---
@@ -92,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!selectedAutoroute) {
             directionButtonsContainer.innerHTML = '<p>Veuillez sélectionner une autoroute d\'abord.</p>';
             localStorage.removeItem(LAST_DIRECTION_KEY);
+            // Laisser resultsDiv vide si pas d'autoroute sélectionnée
+            resultsDiv.innerHTML = '';
             return;
         }
 
@@ -102,6 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (uniqueSens.length === 0) {
             directionButtonsContainer.innerHTML = '<p>Aucun sens disponible pour cette autoroute.</p>';
             localStorage.removeItem(LAST_DIRECTION_KEY);
+            // Afficher un message spécifique si pas de sens disponible
+            resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p style="color: orange;">Aucun sens disponible pour cette autoroute.</p>';
             return;
         }
 
@@ -115,11 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 button.classList.add('selected');
                 selectedDirection = sens;
                 localStorage.setItem(LAST_DIRECTION_KEY, sens);
+                // Afficher un message après la sélection d'un sens
+                resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>';
             });
             directionButtonsContainer.appendChild(button);
         });
-
-        resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>';
 
         const lastDirection = localStorage.getItem(LAST_DIRECTION_KEY);
         if (lastDirection && uniqueSens.includes(lastDirection)) {
@@ -146,9 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
             pkInput.value = lastPk;
         }
 
+        // Si une recherche complète peut être lancée au démarrage, on la lance et le message sera affiché par la fonction de recherche
         setTimeout(() => {
             if (selectedAutoroute && selectedDirection && pkInput.value) {
                 searchButton.click();
+            } else if (selectedAutoroute) {
+                // Si une autoroute est sélectionnée mais pas encore de direction ou PK, on affiche le message approprié
+                resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>';
             }
         }, 100);
     }
@@ -167,7 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem(LAST_PK_KEY);
 
         updateDirectionButtons();
-        resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>';
+        // Vider complètement la section des résultats après réinitialisation
+        resultsDiv.innerHTML = '';
     }
 
     // --- Écouteur d'événement pour le bouton Réinitialiser ---
@@ -183,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem(LAST_PK_KEY);
         }
 
-        resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2>';
+        resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2>'; // Toujours afficher ce titre avant les messages d'erreur ou les résultats
 
         if (isNaN(targetPk)) {
             resultsDiv.innerHTML += '<p style="color: red;">Veuillez entrer un PK valide (un nombre).</p>';
