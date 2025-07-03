@@ -345,6 +345,8 @@ button#searchButton:hover {
     color: var(--results-text);
     box-shadow: 0 0 20px var(--results-shadow);
     transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease; /* Transition douce */
+    /* NOUVEAU : Masquer le cadre par défaut */
+    display: none;
 }
 
 #results h2 {

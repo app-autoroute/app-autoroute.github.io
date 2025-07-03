@@ -17,6 +17,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const LAST_PK_KEY = LOCAL_STORAGE_PREFIX + 'lastPk';
     const THEME_KEY = LOCAL_STORAGE_PREFIX + 'theme';
 
+    // --- Fonction utilitaire pour afficher les résultats ---
+    // Cette fonction s'assure que la div des résultats est visible avant d'y injecter du contenu
+    function displayResults(content) {
+        resultsDiv.innerHTML = content;
+        resultsDiv.style.display = 'block'; // Rend le cadre visible
+    }
+
+    // --- Fonction utilitaire pour masquer les résultats ---
+    function hideResults() {
+        resultsDiv.innerHTML = ''; // Vide le contenu
+        resultsDiv.style.display = 'none'; // Masque le cadre
+    }
+
     // --- Gestion du thème Jour/Nuit ---
     const currentTheme = localStorage.getItem(THEME_KEY);
     if (currentTheme) {
@@ -50,11 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Données chargées et PK convertis :', portesData);
             populateAutorouteButtons();
             loadLastSelections();
-            // Initialisation de la div results - Elle est vide par défaut maintenant
-            resultsDiv.innerHTML = '';
+            // Au chargement initial, les résultats sont masqués
+            hideResults();
         } catch (error) {
             console.error('Erreur lors du chargement des données des portes :', error);
-            resultsDiv.innerHTML = '<h2>Erreur</h2><p style="color: red;">Impossible de charger les données des portes. Veuillez réessayer plus tard.</p>';
+            displayResults('<h2>Erreur</h2><p style="color: red;">Impossible de charger les données des portes. Veuillez réessayer plus tard.</p>');
         }
     }
 
@@ -80,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem(LAST_AUTOROUTE_KEY, autoroute);
                 updateDirectionButtons();
                 // Afficher un message après la sélection d'une autoroute
-                resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>';
+                displayResults('<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>');
             });
             autorouteButtonsContainer.appendChild(button);
         });
@@ -94,8 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!selectedAutoroute) {
             directionButtonsContainer.innerHTML = '<p>Veuillez sélectionner une autoroute d\'abord.</p>';
             localStorage.removeItem(LAST_DIRECTION_KEY);
-            // Laisser resultsDiv vide si pas d'autoroute sélectionnée
-            resultsDiv.innerHTML = '';
+            // Laisser resultsDiv masquée si pas d'autoroute sélectionnée
+            hideResults();
             return;
         }
 
@@ -107,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             directionButtonsContainer.innerHTML = '<p>Aucun sens disponible pour cette autoroute.</p>';
             localStorage.removeItem(LAST_DIRECTION_KEY);
             // Afficher un message spécifique si pas de sens disponible
-            resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p style="color: orange;">Aucun sens disponible pour cette autoroute.</p>';
+            displayResults('<h2>Résultats de la recherche</h2><p style="color: orange;">Aucun sens disponible pour cette autoroute.</p>');
             return;
         }
 
@@ -122,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedDirection = sens;
                 localStorage.setItem(LAST_DIRECTION_KEY, sens);
                 // Afficher un message après la sélection d'un sens
-                resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>';
+                displayResults('<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>');
             });
             directionButtonsContainer.appendChild(button);
         });
@@ -152,13 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
             pkInput.value = lastPk;
         }
 
-        // Si une recherche complète peut être lancée au démarrage, on la lance et le message sera affiché par la fonction de recherche
+        // Si une recherche complète peut être lancée au démarrage, on la lance
         setTimeout(() => {
             if (selectedAutoroute && selectedDirection && pkInput.value) {
                 searchButton.click();
             } else if (selectedAutoroute) {
                 // Si une autoroute est sélectionnée mais pas encore de direction ou PK, on affiche le message approprié
-                resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>';
+                displayResults('<h2>Résultats de la recherche</h2><p>Entrez un PK et sélectionnez un sens pour trouver une porte.</p>');
             }
         }, 100);
     }
@@ -177,8 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem(LAST_PK_KEY);
 
         updateDirectionButtons();
-        // Vider complètement la section des résultats après réinitialisation
-        resultsDiv.innerHTML = '';
+        // Masquer complètement la section des résultats après réinitialisation
+        hideResults();
     }
 
     // --- Écouteur d'événement pour le bouton Réinitialiser ---
@@ -188,26 +201,28 @@ document.addEventListener('DOMContentLoaded', () => {
     searchButton.addEventListener('click', () => {
         const targetPk = parseFloat(pkInput.value.replace(',', '.'));
 
+        // Avant d'afficher quoi que ce soit, vide et prépare la div des résultats
+        resultsDiv.innerHTML = '';
+        resultsDiv.style.display = 'block'; // Assurez-vous qu'elle est visible pour afficher les messages/résultats
+
         if (!isNaN(targetPk)) {
             localStorage.setItem(LAST_PK_KEY, pkInput.value);
         } else {
             localStorage.removeItem(LAST_PK_KEY);
         }
 
-        resultsDiv.innerHTML = '<h2>Résultats de la recherche</h2>'; // Toujours afficher ce titre avant les messages d'erreur ou les résultats
-
         if (isNaN(targetPk)) {
-            resultsDiv.innerHTML += '<p style="color: red;">Veuillez entrer un PK valide (un nombre).</p>';
+            displayResults('<h2>Résultats de la recherche</h2><p style="color: red;">Veuillez entrer un PK valide (un nombre).</p>');
             return;
         }
 
         if (!selectedAutoroute) {
-            resultsDiv.innerHTML += '<p style="color: red;">Veuillez sélectionner une autoroute.</p>';
+            displayResults('<h2>Résultats de la recherche</h2><p style="color: red;">Veuillez sélectionner une autoroute.</p>');
             return;
         }
 
         if (!selectedDirection) {
-            resultsDiv.innerHTML += '<p style="color: red;">Veuillez sélectionner un sens de circulation.</p>';
+            displayResults('<h2>Résultats de la recherche</h2><p style="color: red;">Veuillez sélectionner un sens de circulation.</p>');
             return;
         }
 
@@ -217,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         );
 
         if (filteredPortes.length === 0) {
-            resultsDiv.innerHTML += '<p style="color: orange;">Aucune porte trouvée pour l\'autoroute et le sens sélectionnés.</p>';
+            displayResults('<h2>Résultats de la recherche</h2><p style="color: orange;">Aucune porte trouvée pour l\'autoroute et le sens sélectionnés.</p>');
             return;
         }
 
@@ -227,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressionPK = filteredPortes[0] ? filteredPortes[0].ProgressionPK : null;
 
         if (!progressionPK) {
-            resultsDiv.innerHTML += '<p style="color: red;">Erreur: Information de progression PK manquante pour ce sens.</p>';
+            displayResults('<h2>Résultats de la recherche</h2><p style="color: red;">Erreur: Information de progression PK manquante pour ce sens.</p>');
             return;
         }
 
@@ -243,7 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else {
                 closestAccess = filteredPortes[0];
-                resultsDiv.innerHTML += '<p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>';
+                displayResults('<h2>Résultats de la recherche</h2><p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>');
+                return; // Important: arrêter ici si on affiche ce message
             }
 
         } else if (progressionPK === "Descendant") {
@@ -257,13 +273,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else {
                 closestAccess = filteredPortes[0];
-                resultsDiv.innerHTML += '<p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>';
+                displayResults('<h2>Résultats de la recherche</h2><p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>');
+                return; // Important: arrêter ici si on affiche ce message
             }
         }
 
-        // --- AFFICHAGE DES RÉSULTATS ---
+        // --- AFFICHAGE DES RÉSULTATS FINAUX ---
         if (closestAccess) {
-            let htmlContent = '';
+            let htmlContent = '<h2>Résultats de la recherche</h2>'; // Inclure le titre ici
             
             const distanceToClosest = Math.abs(targetPk - closestAccess.PK_Num);
 
@@ -302,11 +319,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             }
-
-            resultsDiv.innerHTML += htmlContent;
-
+            displayResults(htmlContent); // Utilise la fonction displayResults
         } else {
-            resultsDiv.innerHTML += '<p style="color: orange;">Aucun accès trouvé correspondant à vos critères.</p>';
+            // Ce cas devrait être rare si les retours précédents sont gérés par 'return'
+            displayResults('<p style="color: orange;">Aucun accès trouvé correspondant à vos critères.</p>');
         }
     });
 
