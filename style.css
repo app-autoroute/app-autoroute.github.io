@@ -122,13 +122,40 @@ h1 {
     position: absolute;
     top: 15px; /* Ajuster la distance du haut */
     right: 15px; /* Ajuster la distance de la droite */
-    display: flex;
-    gap: 5px; /* Petit espace entre les icônes */
+    display: flex; /* Utiliser flex pour aligner les boutons */
+    align-items: center; /* Centrer verticalement les éléments à l'intérieur */
+    gap: 10px; /* Espace entre les boutons */
     z-index: 5; /* S'assurer qu'ils sont au-dessus des autres éléments si nécessaire */
 }
 
-/* Style de base pour les boutons d'icône (Paramètres et Réinitialiser) */
-.settings-button, .reset-button {
+/* Style de base pour le bouton Réinitialiser (texte) */
+.reset-button {
+    background-color: #6c757d; /* Gris par défaut */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.reset-button:hover {
+    background-color: #5a6268; /* Gris plus foncé au survol */
+    transform: translateY(-2px);
+}
+
+/* Ajustement des couleurs du bouton Réinitialiser pour le mode Jour */
+body.light-mode .reset-button {
+    background-color: #818e96;
+}
+
+body.light-mode .reset-button:hover {
+    background-color: #6c757d;
+}
+
+/* Styles pour le bouton Paramètres (icône) */
+.settings-button {
     background-color: transparent; /* Fond transparent */
     border: none; /* Pas de bordure */
     cursor: pointer;
@@ -141,16 +168,12 @@ h1 {
     transition: transform 0.2s ease; /* Pour l'animation au survol */
 }
 
-/* Effet de survol commun */
 .settings-button:hover {
     transform: rotate(30deg); /* Légère rotation au survol */
 }
-.reset-button:hover {
-    transform: scale(1.1); /* Léger agrandissement au survol */
-}
 
-/* Style de l'icône SVG à l'intérieur des boutons */
-.settings-icon, .reset-icon {
+/* Style de l'icône SVG à l'intérieur du bouton Paramètres */
+.settings-icon {
     width: 24px; /* Taille de l'icône */
     height: 24px; /* Taille de l'icône */
     color: var(--button-bg); /* Utilise la couleur principale du thème pour l'icône */
@@ -158,18 +181,15 @@ h1 {
 }
 
 /* Ajustement de la couleur de l'icône au survol */
-.settings-button:hover .settings-icon,
-.reset-button:hover .reset-icon {
+.settings-button:hover .settings-icon {
     color: var(--button-hover-bg); /* Couleur au survol */
 }
 
-/* Ajustement de la couleur des icônes pour le mode Jour */
-body.light-mode .settings-icon,
-body.light-mode .reset-icon {
+/* Ajustement de la couleur de l'icône pour le mode Jour */
+body.light-mode .settings-icon {
     color: var(--button-bg);
 }
-body.light-mode .settings-button:hover .settings-icon,
-body.light-mode .reset-button:hover .reset-icon {
+body.light-mode .settings-button:hover .settings-icon {
     color: var(--button-hover-bg);
 }
 
