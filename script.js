@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Écouteur d'événement pour le bouton Réinitialiser ---
     resetButton.addEventListener('click', resetForm);
 
-    // --- Fonction de recherche de la porte la plus proche (LOGIQUE CORRIGÉE ET AJOUT REPLI) ---
+    // --- Fonction de recherche de la porte la plus proche (LOGIQUE MISE À JOUR) ---
     searchButton.addEventListener('click', () => {
         const targetPk = parseFloat(pkInput.value.replace(',', '.'));
 
@@ -210,8 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let idealPorte = null;
-        let fallbackPorte = null; // Nouvelle variable pour la porte de repli
+        let closestAccess = null; // Renommée de idealPorte en closestAccess
+        let previousAccess = null; // Renommée de fallbackPorte en previousAccess
 
         const progressionPK = filteredPortes[0] ? filteredPortes[0].ProgressionPK : null;
 
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- DÉTERMINATION DES PORTES IDÉALE ET DE REPLI ---
+        // --- DÉTERMINATION DE L'ACCÈS LE PLUS PROCHE ET DE L'ACCÈS PRÉCÉDENT ---
         if (progressionPK === "Ascendant") {
             // Trier toutes les portes filtrées par PK ascendant
             filteredPortes.sort((a, b) => a.PK_Num - b.PK_Num);
@@ -229,17 +229,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const accessiblePortes = filteredPortes.filter(porte => porte.PK_Num <= targetPk);
 
             if (accessiblePortes.length > 0) {
-                // La porte idéale est la dernière accessible (PK le plus élevé <= targetPk)
-                idealPorte = accessiblePortes[accessiblePortes.length - 1];
+                // L'accès le plus proche est la dernière accessible (PK le plus élevé <= targetPk)
+                closestAccess = accessiblePortes[accessiblePortes.length - 1];
                 
-                // La porte de repli est l'avant-dernière accessible, si elle existe
+                // L'accès précédent est l'avant-dernière accessible, si elle existe
                 if (accessiblePortes.length >= 2) {
-                    fallbackPorte = accessiblePortes[accessiblePortes.length - 2];
+                    previousAccess = accessiblePortes[accessiblePortes.length - 2];
                 }
             } else {
                 // Si aucune porte n'est accessible (toutes sont après le PK cible)
-                // L'idéal est la première porte du segment (celle avec le plus petit PK)
-                idealPorte = filteredPortes[0];
+                // L'accès le plus proche est la première porte du segment (celle avec le plus petit PK)
+                closestAccess = filteredPortes[0];
                 resultsDiv.innerHTML += '<p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>';
             }
 
@@ -251,68 +251,67 @@ document.addEventListener('DOMContentLoaded', () => {
             const accessiblePortes = filteredPortes.filter(porte => porte.PK_Num >= targetPk);
 
             if (accessiblePortes.length > 0) {
-                // La porte idéale est la dernière accessible (PK le plus bas >= targetPk)
-                idealPorte = accessiblePortes[accessiblePortes.length - 1];
+                // L'accès le plus proche est la dernière accessible (PK le plus bas >= targetPk)
+                closestAccess = accessiblePortes[accessiblePortes.length - 1];
 
-                // La porte de repli est l'avant-dernier accessible, si elle existe
+                // L'accès précédent est l'avant-dernier accessible, si elle existe
                 if (accessiblePortes.length >= 2) {
-                    fallbackPorte = accessiblePortes[accessiblePortes.length - 2];
+                    previousAccess = accessiblePortes[accessiblePortes.length - 2];
                 }
             } else {
                 // Si aucune porte n'est accessible (toutes sont avant le PK cible)
-                // L'idéal est la première porte du segment (celle avec le plus grand PK)
-                idealPorte = filteredPortes[0];
+                // L'accès le plus proche est la première porte du segment (celle avec le plus grand PK)
+                closestAccess = filteredPortes[0];
                 resultsDiv.innerHTML += '<p style="color: orange;">Vous n\'avez pas encore atteint la première porte dans ce sens. Affichage de la première porte disponible.</p>';
             }
         }
 
-        // --- AFFICHAGE DES RÉSULTATS (incluant la porte de repli) ---
-        if (idealPorte) {
-            // Calculer la distance entre le PK visé et la porte idéale
-            const distanceToIdeal = Math.abs(targetPk - idealPorte.PK_Num);
-            const shouldHighlightFallback = distanceToIdeal < 0.3; // Condition pour la mise en évidence
+        // --- AFFICHAGE DES RÉSULTATS ---
+        if (closestAccess) {
+            let htmlContent = '';
+            
+            // Calculer la distance entre le PK visé et l'accès le plus proche
+            const distanceToClosest = Math.abs(targetPk - closestAccess.PK_Num);
 
-            let htmlContent = `
+            htmlContent += `
                 <div class="result-item">
-                    <h3>Porte Idéale :</h3>
-                    <p><strong>Autoroute :</strong> ${idealPorte.Autoroute}</p>
-                    <p><strong>Sens :</strong> ${idealPorte.Sens}</p>
-                    <p><strong>PK :</strong> ${idealPorte.PK}</p>
-                    <p><strong>Type d'accès :</strong> ${idealPorte['Type d\'accès'] || 'Non spécifié'}</p>
-                    <p><strong>Commentaires :</strong> ${idealPorte['Commentaires'] || 'Aucun'}</p>
-                    <p><strong>Route d'accès :</strong> ${idealPorte['Route d\'accès'] || 'Non spécifié'}</p>
-                    ${idealPorte.Photo && idealPorte.Photo !== 'à définir' ? `<p><a href="${idealPorte.Photo}" target="_blank">Voir la photo</a></p>` : ''}
-                    <a href="https://www.google.com/maps/search/?api=1&query=${idealPorte.Latitude.trim()},${idealPorte.Longitude.trim()}" target="_blank" class="map-link">Voir sur Google Maps</a>
-                </div>
+                    <h3>Accès le plus proche :</h3>
+                    <p><strong>Autoroute :</strong> ${closestAccess.Autoroute}</p>
+                    <p><strong>Sens :</strong> ${closestAccess.Sens}</p>
+                    <p><strong>PK :</strong> ${closestAccess.PK}</p>
+                    <p><strong>Type d'accès :</strong> ${closestAccess['Type d\'accès'] || 'Non spécifié'}</p>
+                    <p><strong>Commentaires :</strong> ${closestAccess['Commentaires'] || 'Aucun'}</p>
+                    <p><strong>Route d'accès :</strong> ${closestAccess['Route d\'accès'] || 'Non spécifié'}</p>
+                    ${closestAccess.Photo && closestAccess.Photo !== 'à définir' ? `<p><a href="${closestAccess.Photo}" target="_blank">Voir la photo</a></p>` : ''}
+                    <a href="https://www.google.com/maps/search/?api=1&query=${closestAccess.Latitude.trim()},${closestAccess.Longitude.trim()}" target="_blank" class="map-link">Voir sur Google Maps</a>
             `;
+            // Ajout de l'annotation si la distance est < 300m
+            if (distanceToClosest < 0.3) {
+                htmlContent += `<span class="proximity-alert">Cet accès est à moins de 300m de votre cible (${(distanceToClosest * 1000).toFixed(0)} m).</span>`;
+            }
+            htmlContent += `</div>`; // Fermeture du result-item
 
-            if (fallbackPorte) {
-                const fallbackClass = shouldHighlightFallback ? 'fallback-link' : 'map-link'; // Utilise la même classe de base pour le style par défaut
-                const fallbackTitle = shouldHighlightFallback ? 'PORTE DE REPLI (Attention, idéal très proche !) :' : 'Porte de Repli possible :';
 
+            if (previousAccess) {
                 htmlContent += `
                     <div class="result-item">
-                        <h3>${fallbackTitle}</h3>
-                        <p><strong>Autoroute :</strong> ${fallbackPorte.Autoroute}</p>
-                        <p><strong>Sens :</strong> ${fallbackPorte.Sens}</p>
-                        <p><strong>PK :</strong> ${fallbackPorte.PK}</p>
-                        <p><strong>Type d'accès :</strong> ${fallbackPorte['Type d\'accès'] || 'Non spécifié'}</p>
-                        <p><strong>Commentaires :</strong> ${fallbackPorte['Commentaires'] || 'Aucun'}</p>
-                        <p><strong>Route d'accès :</strong> ${fallbackPorte['Route d\'accès'] || 'Non spécifié'}</p>
-                        ${fallbackPorte.Photo && fallbackPorte.Photo !== 'à définir' ? `<p><a href="${fallbackPorte.Photo}" target="_blank">Voir la photo</a></p>` : ''}
-                        <a href="https://www.google.com/maps/search/?api=1&query=${fallbackPorte.Latitude.trim()},${fallbackPorte.Longitude.trim()}" target="_blank" class="${fallbackClass}">Voir sur Google Maps</a>
+                        <h3>Accès précédent :</h3>
+                        <p><strong>Autoroute :</strong> ${previousAccess.Autoroute}</p>
+                        <p><strong>Sens :</strong> ${previousAccess.Sens}</p>
+                        <p><strong>PK :</strong> ${previousAccess.PK}</p>
+                        <p><strong>Type d'accès :</strong> ${previousAccess['Type d\'accès'] || 'Non spécifié'}</p>
+                        <p><strong>Commentaires :</strong> ${previousAccess['Commentaires'] || 'Aucun'}</p>
+                        <p><strong>Route d'accès :</strong> ${previousAccess['Route d\'accès'] || 'Non spécifié'}</p>
+                        ${previousAccess.Photo && previousAccess.Photo !== 'à définir' ? `<p><a href="${previousAccess.Photo}" target="_blank">Voir la photo</a></p>` : ''}
+                        <a href="https://www.google.com/maps/search/?api=1&query=${previousAccess.Latitude.trim()},${previousAccess.Longitude.trim()}" target="_blank" class="map-link">Voir sur Google Maps</a>
                     </div>
                 `;
-            } else if (accessiblePortes.length === 1 && accessiblePortes[0] === idealPorte && distanceToIdeal < 0.3) {
-                 // Cas où il n'y a qu'une seule porte accessible (l'idéale) et elle est très proche
-                htmlContent += `<p style="color: orange;">Attention : C'est la seule porte accessible restante dans ce sens et elle est très proche de votre PK actuel (${distanceToIdeal.toFixed(2)} km).</p>`;
             }
-
 
             resultsDiv.innerHTML += htmlContent;
 
         } else {
-            resultsDiv.innerHTML += '<p style="color: orange;">Aucune porte trouvée correspondant à vos critères.</p>';
+            resultsDiv.innerHTML += '<p style="color: orange;">Aucun accès trouvé correspondant à vos critères.</p>';
         }
     });
 

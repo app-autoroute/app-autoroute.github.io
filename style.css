@@ -40,7 +40,7 @@ body {
     --input-group-bg: rgba(34, 34, 34, 0.9); /* Fond pour les input-group */
     --input-group-border: #880000; /* Bordure pour les input-group */
     --input-group-shadow: rgba(255, 0, 0, 0.3); /* Ombre pour les input-group */
-    --fallback-highlight-color: #00ff00; /* Vert fluo pour le mode nuit */
+    --proximity-alert-color: #ffa500; /* Couleur pour l'alerte de proximité (orange) */
 }
 
 /* Application des variables de thème */
@@ -91,7 +91,7 @@ body.light-mode {
     --input-group-bg: rgba(240, 240, 240, 0.9); /* Fond clair pour les input-group */
     --input-group-border: #0056b3; /* Bordure claire pour les input-group */
     --input-group-shadow: rgba(0, 123, 255, 0.1); /* Ombre claire pour les input-group */
-    --fallback-highlight-color: #0000ff; /* Bleu plus voyant pour le mode jour */
+    --proximity-alert-color: #e66b00; /* Orange plus doux pour le mode jour */
 }
 
 /* Conteneur principal de l'application */
@@ -381,24 +381,12 @@ button#searchButton:hover {
     background-color: var(--map-link-hover-bg);
 }
 
-/* NOUVEAU STYLE POUR LA PORTE DE REPLI */
-.fallback-link {
-    display: inline-block; /* Ou block si vous voulez qu'il prenne toute la largeur */
-    margin-top: 10px;
-    padding: 8px 12px;
-    font-weight: bold; /* Texte en gras */
-    background-color: var(--fallback-highlight-color); /* Couleur qui claque ! */
-    color: black; /* Texte noir pour contraster */
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    border: 2px solid var(--fallback-highlight-color); /* Une bordure de la même couleur pour l'effet */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* Légère ombre */
-}
-
-.fallback-link:hover {
-    filter: brightness(1.1); /* Rendre un peu plus lumineux au survol */
-    transform: translateY(-1px);
+/* Style pour l'annotation de proximité */
+.proximity-alert {
+    color: var(--proximity-alert-color); /* Utilise la variable de couleur pour l'alerte */
+    font-weight: bold;
+    margin-top: 5px;
+    display: block; /* Pour qu'elle prenne sa propre ligne */
 }
 
 
