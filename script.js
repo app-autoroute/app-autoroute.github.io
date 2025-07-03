@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             htmlContent += `
                 <div class="result-item">
-                    <h3>Accès le plus proche :</h3>
+                    <h3>Accès le plus proche de l'intervention :</h3>
                     <p><strong>Autoroute :</strong> ${closestAccess.Autoroute}</p>
                     <p><strong>Sens :</strong> ${closestAccess.Sens}</p>
                     <p><strong>PK :</strong> ${closestAccess.PK}</p>
