@@ -112,22 +112,28 @@ body.light-mode {
 
 h1 {
     color: var(--h1-color);
-    margin-bottom: 15px; /* Réduire la marge pour le bouton Réinitialiser */
+    margin-bottom: 15px; /* Réduire la marge pour les boutons sous le titre */
     text-shadow: 2px 2px 5px var(--h1-shadow);
     transition: color 0.5s ease, text-shadow 0.5s ease; /* Transition douce */
 }
 
+/* Positionnement des boutons d'action (Paramètres, Réinitialiser) */
+.settings-button, .reset-button {
+    vertical-align: middle; /* Alignement vertical avec les autres éléments */
+    margin-bottom: 20px; /* Marge en bas pour espacer du contenu suivant */
+}
+
 /* Style pour le bouton Réinitialiser */
 .reset-button {
-    background-color: #6c757d; /* Gris par default */
+    background-color: #6c757d; /* Gris par défaut */
     color: white;
     padding: 8px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 0.9em;
-    margin-bottom: 20px;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-left: 10px; /* Espace entre les boutons */
 }
 
 .reset-button:hover {
@@ -142,6 +148,47 @@ body.light-mode .reset-button {
 
 body.light-mode .reset-button:hover {
     background-color: #6c757d;
+}
+
+/* Styles pour le bouton Paramètres (maintenant une icône) */
+.settings-button {
+    background-color: transparent; /* Fond transparent */
+    border: none; /* Pas de bordure */
+    cursor: pointer;
+    padding: 0; /* Pas de rembourrage */
+    margin-right: 10px; /* Espace entre les boutons */
+    display: inline-flex; /* Permet d'aligner l'icône */
+    align-items: center;
+    justify-content: center;
+    width: 30px; /* Largeur du bouton */
+    height: 30px; /* Hauteur du bouton */
+    vertical-align: middle; /* Alignement vertical */
+    transition: transform 0.2s ease; /* Pour l'animation au survol */
+}
+
+.settings-button:hover {
+    transform: rotate(30deg); /* Légère rotation au survol */
+}
+
+/* Style de l'icône SVG à l'intérieur du bouton Paramètres */
+.settings-icon {
+    width: 24px; /* Taille de l'icône */
+    height: 24px; /* Taille de l'icône */
+    color: var(--button-bg); /* Utilise la couleur principale du thème pour l'icône */
+    transition: color 0.3s ease; /* Pour la transition de couleur avec le thème */
+}
+
+/* Ajustement de la couleur de l'icône au survol */
+.settings-button:hover .settings-icon {
+    color: var(--button-hover-bg); /* Couleur au survol */
+}
+
+/* Ajustement de la couleur de l'icône pour le mode Jour */
+body.light-mode .settings-icon {
+    color: var(--button-bg);
+}
+body.light-mode .settings-button:hover .settings-icon {
+    color: var(--button-hover-bg);
 }
 
 
@@ -345,8 +392,7 @@ button#searchButton:hover {
     color: var(--results-text);
     box-shadow: 0 0 20px var(--results-shadow);
     transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease; /* Transition douce */
-    /* NOUVEAU : Masquer le cadre par défaut */
-    display: none;
+    display: none; /* Masquer le cadre par défaut */
 }
 
 #results h2 {
@@ -408,4 +454,128 @@ p[style*="color: orange;"] {
     font-weight: bold;
     text-align: center;
     margin-top: 15px;
+}
+
+/* Styles pour la modale de configuration */
+.modal {
+    display: none; /* Masqué par défaut */
+    position: fixed; /* Reste en place même en scrollant */
+    z-index: 10; /* Par-dessus tout le reste */
+    left: 0;
+    top: 0;
+    width: 100%; /* Toute la largeur */
+    height: 100%; /* Toute la hauteur */
+    overflow: auto; /* Active le défilement si nécessaire */
+    background-color: rgba(0,0,0,0.8); /* Fond noir semi-transparent */
+    justify-content: center; /* Centre horizontalement le contenu */
+    align-items: center; /* Centre verticalement le contenu */
+}
+
+.modal-content {
+    background-color: var(--container-bg);
+    margin: auto; /* Centre la boîte */
+    padding: 20px;
+    border: 3px solid var(--container-border);
+    width: 80%; /* Largeur de la boîte */
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    position: relative;
+    color: var(--body-text);
+}
+
+.close-button {
+    color: var(--body-text);
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: var(--button-hover-bg);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    color: var(--h1-color);
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 2px solid var(--results-h2-border);
+    padding-bottom: 10px;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+    max-height: 250px; /* Limite la hauteur et ajoute un scroll si nécessaire */
+    overflow-y: auto;
+    padding: 5px;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    background-color: var(--input-bg);
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: normal; /* Override default label bold */
+    color: var(--input-text);
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 3px;
+    appearance: none; /* Masque le style par défaut du checkbox */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+    flex-shrink: 0; /* Empêche le checkbox de rétrécir */
+}
+
+.checkbox-group input[type="checkbox"]:checked {
+    background-color: var(--button-bg); /* Couleur de fond quand coché */
+    border-color: var(--button-bg);
+}
+
+.checkbox-group input[type="checkbox"]:checked::after {
+    content: '\2713'; /* Symbole de coche (checkmark) */
+    font-size: 16px;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Style du bouton d'enregistrement dans la modale */
+.save-button {
+    background-color: var(--button-bg);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+}
+
+.save-button:hover {
+    background-color: var(--button-hover-bg);
 }
